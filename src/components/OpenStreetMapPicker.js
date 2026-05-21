@@ -30,7 +30,7 @@ export default function OpenStreetMapPicker({
   const [searchQuery, setSearchQuery] = useState('');
   const [mapHtml, setMapHtml] = useState('');
 
-  // Petron San Pedro Station coordinates
+  // MKC Foods coordinates
   const SAN_PEDRO_COORDS = {
     lat: 9.7534772,
     lng: 118.7478688
@@ -42,7 +42,7 @@ export default function OpenStreetMapPicker({
     
     const parts = [];
     
-    // 1. Get specific building/shop name if available (e.g., "Petron")
+    // 1. Get specific building/shop name if available
     const specificName = addressData.amenity || addressData.shop || addressData.building;
     if (specificName) parts.push(specificName);
 
@@ -51,15 +51,16 @@ export default function OpenStreetMapPicker({
     if (road) parts.push(road);
 
     // 3. Fix the Barangay Boundary Issue using distance calculation
-    // Calculate rough distance from the pin to Petron San Pedro
-    const distanceToPetron = Math.sqrt(
+    // 3. Fix the Barangay Boundary Issue using distance calculation
+    // Calculate rough distance from the pin to the MKC reference point
+    const distanceToReference = Math.sqrt(
       Math.pow(lat - SAN_PEDRO_COORDS.lat, 2) + 
       Math.pow(lng - SAN_PEDRO_COORDS.lng, 2)
     );
 
-    // If the pin is within ~1km of Petron, force it to say "Barangay San Pedro"
+    // If the pin is within ~1km of the reference point, force the local barangay label
     // Because OSM wrongly maps this area as San Miguel/Tiniguiban
-    if (distanceToPetron < 0.01) {
+    if (distanceToReference < 0.01) {
       parts.push("Barangay San Pedro");
     } else {
       // If they are far away, trust OSM's barangay data
@@ -174,7 +175,7 @@ export default function OpenStreetMapPicker({
             
             function getAddressFromCoords(lat, lng) {
               fetch(\`https://nominatim.openstreetmap.org/reverse?format=json&lat=\${lat}&lon=\${lng}&addressdetails=1&zoom=18\`, {
-                headers: { 'User-Agent': 'PetronSanPedroApp/1.0' }
+                headers: { 'User-Agent': 'MKCFoodsApp/2.0' }
               })
                 .then(response => response.json())
                 .then(data => {
@@ -234,7 +235,7 @@ export default function OpenStreetMapPicker({
             const fullQuery = query + ', Puerto Princesa City, Palawan';
             
             fetch(\`https://nominatim.openstreetmap.org/search?format=json&q=\${encodeURIComponent(fullQuery)}&limit=5&countrycodes=PH&addressdetails=1\`, {
-              headers: { 'User-Agent': 'PetronSanPedroApp/1.0' }
+              headers: { 'User-Agent': 'MKCFoodsApp/2.0' }
             })
               .then(response => response.json())
               .then(results => {
@@ -244,7 +245,7 @@ export default function OpenStreetMapPicker({
                   marker.setLatLng([first.lat, first.lon]);
                   
                   fetch(\`https://nominatim.openstreetmap.org/reverse?format=json&lat=\${first.lat}&lon=\${first.lon}&addressdetails=1\`, {
-                    headers: { 'User-Agent': 'PetronSanPedroApp/1.0' }
+                    headers: { 'User-Agent': 'MKCFoodsApp/2.0' }
                   })
                     .then(res => res.json())
                     .then(detail => {

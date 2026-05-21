@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f0f4ff', // Light blue background
+    backgroundColor: '#f0f4ff',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#0033A0', // Petron Blue
+    color: '#0033A0',
     marginBottom: 2,
   },
   subtitle: {

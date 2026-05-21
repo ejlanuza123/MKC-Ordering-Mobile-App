@@ -246,7 +246,7 @@ export default function IntroScreen({ onGetStarted }) {
 
       {stage === 'hero' ? (
         <Animated.View style={[styles.logoCard, { transform: [{ scale: logoScaleAnim }, { translateY: logoMoveAnim }] }]}>
-          <Image source={require('../../../assets/petron-logo.jpg')} style={styles.logo} resizeMode="contain" />
+          <Image source={require('../../../assets/splash-icon.png')} style={styles.logo} resizeMode="contain" />
         </Animated.View>
       ) : null}
 
@@ -260,7 +260,7 @@ export default function IntroScreen({ onGetStarted }) {
             },
           ]}
         >
-          <Text style={styles.title}>Welcome to Petron San Pedro</Text>
+          <Text style={styles.title}>Welcome to MKC Foods Corporation</Text>
           <Text style={styles.subtitle}>Fast ordering, real-time tracking, and reliable updates in one app experience.</Text>
 
           <Animated.View style={{ opacity: heroButtonOpacity, width: '100%' }}>

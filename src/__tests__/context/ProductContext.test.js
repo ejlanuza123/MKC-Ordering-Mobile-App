@@ -43,16 +43,16 @@ describe('ProductContext', () => {
       data: [
         {
           id: 'p-1',
-          name: 'Diesel',
-          category: 'Fuel',
+          name: 'MKC Chicken Breast',
+          category: 'Whole Chicken',
           stock_quantity: 5,
           low_stock_threshold: 10,
           is_active: true,
         },
         {
           id: 'p-2',
-          name: 'Oil',
-          category: 'Lubricants',
+          name: 'MKC Chicken Wings',
+          category: 'Cut-Ups & Portions',
           stock_quantity: 30,
           low_stock_threshold: 10,
           is_active: true,
@@ -64,8 +64,8 @@ describe('ProductContext', () => {
     mockSingle.mockResolvedValue({
       data: {
         id: 'p-1',
-        name: 'Diesel',
-        category: 'Fuel',
+        name: 'MKC Chicken Breast',
+        category: 'Whole Chicken',
         stock_quantity: 5,
         low_stock_threshold: 10,
         is_active: true,
@@ -112,7 +112,7 @@ describe('ProductContext', () => {
       expect(ctxRef.current.products).toHaveLength(2);
     });
 
-    expect(ctxRef.current.getProductsByCategory('Fuel')).toHaveLength(1);
+    expect(ctxRef.current.getProductsByCategory('Whole Chicken')).toHaveLength(1);
     expect(ctxRef.current.getProductsByCategory('All')).toHaveLength(2);
     expect(ctxRef.current.getLowStockProducts()).toHaveLength(1);
     expect(ctxRef.current.getActiveProducts()).toHaveLength(2);
@@ -154,7 +154,7 @@ describe('ProductContext', () => {
         new: {
           id: 'p-3',
           name: 'Grease',
-          category: 'Lubricants',
+          category: 'Cut-Ups & Portions',
           stock_quantity: 20,
           is_active: true,
         },
@@ -170,15 +170,15 @@ describe('ProductContext', () => {
         old: { id: 'p-1', stock_quantity: 5 },
         new: {
           id: 'p-1',
-          name: 'Diesel Updated',
-          category: 'Fuel',
+          name: 'MKC Chicken Breast Updated',
+          category: 'Whole Chicken',
           stock_quantity: 4,
           is_active: true,
         },
       });
     });
 
-    expect(ctxRef.current.products.find((p) => p.id === 'p-1').name).toBe('Diesel Updated');
+    expect(ctxRef.current.products.find((p) => p.id === 'p-1').name).toBe('MKC Chicken Breast Updated');
 
     act(() => {
       realtimeCallback({
@@ -393,15 +393,15 @@ describe('ProductContext', () => {
         old: { id: 'p-1', stock_quantity: 5 },
         new: {
           id: 'p-1',
-          name: 'Diesel Renamed',
-          category: 'Fuel',
+          name: 'MKC Chicken Breast Renamed',
+          category: 'Whole Chicken',
           stock_quantity: 5,
           is_active: true,
         },
       });
     });
 
-    expect(ctxRef.current.products.find((p) => p.id === 'p-1')?.name).toBe('Diesel Renamed');
+    expect(ctxRef.current.products.find((p) => p.id === 'p-1')?.name).toBe('MKC Chicken Breast Renamed');
     expect(ctxRef.current.hasRealtimeUpdates).toBe(true);
     expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Stock updated for'));
 

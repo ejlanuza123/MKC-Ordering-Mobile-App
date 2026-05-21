@@ -1,32 +1,32 @@
 {
   "expo": {
-    "name": "Petron San Pedro App",
-    "slug": "PetronSanPedroApp",
-    "version": "1.2.0",
-    "scheme": "petronapp",
+    "name": "MKC Foods App",
+    "slug": "MKCFoodsApp",
+    "version": "2.0.0",
+    "scheme": "mkcfoodsapp",
     "orientation": "portrait",
-    "icon": "./assets/petron-logo.png",
+    "icon": "./assets/mkc-logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/petron-logo.png",
+      "image": "./assets/mkc-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow Petron San Pedro App to access your camera to take profile pictures.",
-        "NSPhotoLibraryUsageDescription": "Allow Petron San Pedro App to access your photos to set your profile picture."
+        "NSCameraUsageDescription": "Allow MKC Foods App to access your camera to take profile pictures.",
+        "NSPhotoLibraryUsageDescription": "Allow MKC Foods App to access your photos to set your profile picture."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/petron-logo.png",
+        "foregroundImage": "./assets/mkc-logo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.ejlanuza124.PetronSanPedroApp",
+      "package": "com.ejlanuza124.MKCFoodsApp",
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
@@ -43,14 +43,14 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Petron San Pedro App to use your location to accurately pinpoint your delivery address."
+          "locationAlwaysAndWhenInUsePermission": "Allow MKC Foods App to use your location to accurately pinpoint your delivery address."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Petron San Pedro App to access your photos to set your profile picture.",
-          "cameraPermission": "Allow Petron San Pedro App to access your camera to take profile pictures."
+          "photosPermission": "Allow MKC Foods App to access your photos to set your profile picture.",
+          "cameraPermission": "Allow MKC Foods App to access your camera to take profile pictures."
         }
       ]
     ],

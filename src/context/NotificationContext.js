@@ -46,7 +46,7 @@ export const NotificationProvider = ({ children }) => {
           await mobileNotificationService.savePushToken(userId, token);
         }
 
-        const title = role === 'rider' ? 'Welcome, Rider!' : 'Welcome to Petron San Pedro!';
+        const title = role === 'rider' ? 'Welcome, Rider!' : 'Welcome to MKC Foods Corporation!';
         const body = role === 'rider'
           ? 'Use this app to accept deliveries, track routes, and update order status in real time.'
           : 'Use this app to order products, track deliveries, and get order updates in real time.';

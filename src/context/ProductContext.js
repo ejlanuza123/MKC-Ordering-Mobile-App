@@ -84,6 +84,11 @@ export const ProductProvider = ({ children }) => {
     return products.filter(p => p.category === category);
   }, [products]);
 
+  // Get the category list currently available in the catalog
+  const getProductCategories = useCallback(() => {
+    return [...new Set(products.map((product) => product.category).filter(Boolean))].sort();
+  }, [products]);
+
   // Get low stock products
   const getLowStockProducts = useCallback(() => {
     return products.filter(p => isLowStock(p));
@@ -162,6 +167,7 @@ export const ProductProvider = ({ children }) => {
     fetchProducts,
     getProductById,
     getProductsByCategory,
+    getProductCategories,
     getLowStockProducts,
     getActiveProducts,
     isLowStock,

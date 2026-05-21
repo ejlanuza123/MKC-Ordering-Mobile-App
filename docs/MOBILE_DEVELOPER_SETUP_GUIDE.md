@@ -1,6 +1,6 @@
 # Mobile Developer Setup Guide
 
-This guide helps new developers set up the Petron San Pedro mobile app on a Windows machine.
+This guide helps new developers set up the MKC Foods mobile app on a Windows machine.
 
 ## Overview
 
@@ -26,7 +26,7 @@ The mobile app is a React Native + Expo application for customers and riders. It
 ## Install
 
 ```powershell
-cd C:\Projects\PetronSanPedroApp
+cd C:\Projects\MKC Foods Corporation\mkc-mobile-app
 npm install
 ```
 

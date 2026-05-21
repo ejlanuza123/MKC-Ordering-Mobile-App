@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useCallback, useMemo, useEf
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CartContext = createContext();
-const CART_STORAGE_KEY = 'petron_cart_items';
+const CART_STORAGE_KEY = 'mkc_cart_items';
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);

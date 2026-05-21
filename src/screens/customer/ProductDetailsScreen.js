@@ -49,8 +49,6 @@ export default function ProductDetailsScreen({ route, navigation }) {
     setShowAlert(true);
   };
 
-  const isFuel = product.category === 'Fuel';
-
   useEffect(() => {
     if (!quantity || isNaN(quantity)) {
       setTotalPrice(0);
@@ -58,13 +56,8 @@ export default function ProductDetailsScreen({ route, navigation }) {
     }
 
     const val = parseFloat(quantity);
-    
-    if (mode === 'liters') {
-      setTotalPrice(val * product.current_price);
-    } else {
-      setTotalPrice(val);
-    }
-  }, [quantity, mode]);
+    setTotalPrice(val * product.current_price);
+  }, [quantity, product.current_price]);
 
   const handleInputChange = (text) => {
     const cleanText = text.replace(/[^0-9.]/g, '');
@@ -82,11 +75,9 @@ export default function ProductDetailsScreen({ route, navigation }) {
       return;
     }
 
-    const finalLiters = mode === 'liters' 
-      ? parseFloat(quantity) 
-      : parseFloat(quantity) / product.current_price;
+    const finalQuantity = parseFloat(quantity);
 
-    addToCart(product, finalLiters, parseFloat(totalPrice));
+    addToCart(product, finalQuantity, parseFloat(totalPrice));
     
     setAlertConfig({
       type: 'success',
@@ -133,10 +124,10 @@ export default function ProductDetailsScreen({ route, navigation }) {
             ) : (
               <View style={[
                 styles.placeholderImage, 
-                { backgroundColor: isFuel ? '#0033A0' : '#ED2939' }
+                { backgroundColor: '#0033A0' }
               ]}>
                 <Ionicons 
-                  name={isFuel ? "water" : "water"} 
+                  name="nutrition" 
                   size={60} 
                   color="#fff" 
                 />
@@ -153,7 +144,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 <View style={styles.categoryContainer}>
                   <View style={[
                     styles.categoryBadge,
-                    { backgroundColor: isFuel ? '#0033A0' : '#ED2939' }
+                    { backgroundColor: '#0033A0' }
                   ]}>
                     <Text style={styles.categoryText}>
                       {product.category}
@@ -200,47 +191,13 @@ export default function ProductDetailsScreen({ route, navigation }) {
 
             {/* Quantity Input Section */}
             <Text style={styles.sectionTitle}>
-              {isFuel ? 'How much would you like?' : 'Select Quantity'}
+              Select Quantity
             </Text>
-
-            {/* Toggle for Fuel */}
-            {isFuel && (
-              <View style={styles.toggleContainer}>
-                <TouchableOpacity 
-                  style={[styles.toggleBtn, mode === 'liters' && styles.activeToggle]}
-                  onPress={() => { setMode('liters'); setQuantity('1'); }}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons 
-                    name="water" 
-                    size={20} 
-                    color={mode === 'liters' ? '#0033A0' : '#666'} 
-                  />
-                  <Text style={[styles.toggleText, mode === 'liters' && styles.activeText]}>
-                    By Liters
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.toggleBtn, mode === 'amount' && styles.activeToggle]}
-                  onPress={() => { setMode('amount'); setQuantity('100'); }}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons 
-                    name="cash" 
-                    size={20} 
-                    color={mode === 'amount' ? '#0033A0' : '#666'} 
-                  />
-                  <Text style={[styles.toggleText, mode === 'amount' && styles.activeText]}>
-                    By Amount
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
 
             {/* Input Field */}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>
-                {mode === 'liters' || !isFuel ? 'Quantity' : 'Amount (₱)'}
+                Quantity
               </Text>
               <View style={styles.inputWrapper}>
                 <TextInput
@@ -252,19 +209,14 @@ export default function ProductDetailsScreen({ route, navigation }) {
                   placeholderTextColor="#999"
                 />
                 <Text style={styles.suffix}>
-                  {mode === 'liters' || !isFuel ? product.unit : 'PHP'}
+                  {product.unit || 'pcs'}
                 </Text>
               </View>
               
               {/* Calculation Display */}
-              {isFuel && (
-                <Text style={styles.helperText}>
-                  {mode === 'liters' 
-                    ? `Total: ₱${totalPrice.toFixed(2)}` 
-                    : `Approx: ${((parseFloat(quantity) || 0) / product.current_price).toFixed(2)} Liters`
-                  }
-                </Text>
-              )}
+              <Text style={styles.helperText}>
+                Total: ₱{totalPrice.toFixed(2)}
+              </Text>
             </View>
 
             {/* Delivery Info */}
@@ -281,7 +233,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
             <View>
               <Text style={styles.footerLabel}>Total Amount</Text>
               <Text style={styles.footerPrice}>
-                ₱{mode === 'amount' ? parseFloat(quantity || 0).toFixed(2) : totalPrice.toFixed(2)}
+                ₱{totalPrice.toFixed(2)}
               </Text>
             </View>
             <TouchableOpacity 

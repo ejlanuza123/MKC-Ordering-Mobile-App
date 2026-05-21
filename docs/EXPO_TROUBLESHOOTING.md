@@ -67,7 +67,7 @@ If you want to keep the workaround across terminal sessions, choose one of these
 
 - Project-local `.env.local` (recommended for per-project settings):
 
-  1. Create (or edit) `./.env.local` at the project root (`PetronSanPedroApp/.env.local`).
+  1. Create (or edit) `./.env.local` at the project root (`mkc-mobile-app/.env.local`).
   2. Add:
 
   ```env

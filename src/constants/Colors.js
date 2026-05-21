@@ -1,7 +1,7 @@
 export default {
-  primary: '#0033A0', // Petron Blue - Primary brand color
-  secondary: '#ED2939', // Petron Red - Secondary/Action color
-  accent: '#ED2939', // Keep red as accent too
+  primary: '#0033A0', // Primary brand color
+  secondary: '#F2C300', // Secondary/action color
+  accent: '#F2C300', // Accent color
   
   // Status colors
   warning: '#F59E0B',

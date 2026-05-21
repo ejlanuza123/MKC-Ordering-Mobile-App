@@ -554,8 +554,8 @@ export default function ProfileScreen({ navigation }) {
 
           {/* App Info */}
           <View style={styles.appInfo}>
-            <Text style={styles.appVersion}>Petron San Pedro v1.0.0</Text>
-            <Text style={styles.appCopyright}>© 2026 Petron San Pedro Delivery</Text>
+            <Text style={styles.appVersion}>MKC Foods App v2.0.0</Text>
+            <Text style={styles.appCopyright}>© 2026 MKC Foods Corporation</Text>
           </View>
         </ScrollView>
 

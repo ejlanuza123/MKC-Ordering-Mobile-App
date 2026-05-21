@@ -462,7 +462,7 @@ export default function ReservationScreen({ navigation, route }) {
             {quickGuideExpanded && (
               <>
                 <Text style={styles.wizardInfoText}>1. Pick date  2. Select time  3. Review and submit</Text>
-                <Text style={styles.wizardInfoHint}>Walk-in and drive-in station refuel reservation only.</Text>
+                <Text style={styles.wizardInfoHint}>Pickup and delivery reservation only.</Text>
               </>
             )}
           </View>
@@ -711,7 +711,7 @@ export default function ReservationScreen({ navigation, route }) {
                   <View style={styles.summaryNoteBox}>
                     <Ionicons name="information-circle-outline" size={16} color="#0F766E" />
                     <Text style={styles.summaryNoteText}>
-                      Arrive at the station on time with your vehicle for refuel. Use Manage Reservation if your plan changes.
+                      Arrive on time for your pickup or delivery window. Use Manage Reservation if your plan changes.
                     </Text>
                   </View>
                 </View>
@@ -775,11 +775,11 @@ export default function ReservationScreen({ navigation, route }) {
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Reservation Notice</Text>
             <Text style={styles.modalMessage}>
-              This reservation page is for walk-in or drive-in station refuel bookings only.
+              This reservation page is for pickup or delivery bookings only.
             </Text>
             <View style={styles.noticeList}>
-              <Text style={styles.noticeItem}>- Use this to reserve your station refuel time slot.</Text>
-              <Text style={styles.noticeItem}>- Arrive on time at Petron San Pedro with your vehicle.</Text>
+              <Text style={styles.noticeItem}>- Use this to reserve your pickup or delivery time slot.</Text>
+              <Text style={styles.noticeItem}>- Arrive on time for your scheduled order.</Text>
               <Text style={styles.noticeItem}>- For delivery orders, use the regular ordering flow.</Text>
               <Text style={styles.noticeItem}>- If your schedule changes, use Manage Reservation to change/cancel.</Text>
             </View>

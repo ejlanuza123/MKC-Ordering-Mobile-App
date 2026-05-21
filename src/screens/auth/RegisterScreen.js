@@ -206,7 +206,7 @@ export default function RegisterScreen({ navigation }) {
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={true}
             >
-              <Text style={styles.termsHeading}>Welcome to Petron San Pedro</Text>
+              <Text style={styles.termsHeading}>Welcome to MKC Foods Corporation</Text>
               <Text style={styles.termsParagraph}>
                 By creating an account, you agree to use this app responsibly and provide accurate account and delivery information.
               </Text>
@@ -298,7 +298,7 @@ export default function RegisterScreen({ navigation }) {
               </TouchableOpacity>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Create Account</Text>
-                <Text style={styles.subtitle}>Join Petron San Pedro</Text>
+                <Text style={styles.subtitle}>Join MKC Foods Corporation</Text>
               </View>
               <View style={{ width: 40 }} />
             </View>

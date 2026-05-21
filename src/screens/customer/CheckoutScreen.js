@@ -280,10 +280,10 @@ export default function CheckoutScreen({ navigation }) {
   };
 
   const formatItemQuantity = (item) => {
-    if (item.category === 'Fuel') {
-      return `${item.quantity.toFixed(2)} Liters`;
-    }
-    return `${item.quantity} ${item.unit}(s)`;
+    const formattedQuantity = Number.isInteger(item.quantity)
+      ? String(item.quantity)
+      : Number(item.quantity).toFixed(2);
+    return `${formattedQuantity} ${item.unit || 'pcs'}`;
   };
 
   return (

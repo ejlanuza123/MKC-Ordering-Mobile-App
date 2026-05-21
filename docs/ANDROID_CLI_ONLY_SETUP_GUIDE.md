@@ -139,7 +139,7 @@ emulator -avd Pixel_7_API_34
 From project root:
 
 ```powershell
-cd C:\Projects\PetronSanPedroApp
+cd C:\Projects\MKC Foods Corporation\mkc-mobile-app
 npm install
 npx expo prebuild --platform android --clean
 ```

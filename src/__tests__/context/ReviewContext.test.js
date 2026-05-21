@@ -389,8 +389,8 @@ describe('ReviewContext', () => {
 
   it('should load user reviews for authenticated user', async () => {
     const rows = [
-      { id: 'review-1', rating: 5, products: { name: 'Diesel', image_url: 'img1.jpg' } },
-      { id: 'review-2', rating: 4, products: { name: 'Oil', image_url: 'img2.jpg' } }
+      { id: 'review-1', rating: 5, products: { name: 'MKC Chicken Breast', image_url: 'img1.jpg' } },
+      { id: 'review-2', rating: 4, products: { name: 'MKC Chicken Wings', image_url: 'img2.jpg' } }
     ];
 
     mockFrom.mockReturnValue({
@@ -425,7 +425,7 @@ describe('ReviewContext', () => {
 
     await waitFor(() => expect(result).toBeDefined(), { timeout: 15000 });
     expect(result).toHaveLength(2);
-    expect(result[0].products.name).toBe('Diesel');
+    expect(result[0].products.name).toBe('MKC Chicken Breast');
   }, 15000);
 
   it('should return zero rating summary when there are no ratings', async () => {

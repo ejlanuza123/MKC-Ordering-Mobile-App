@@ -52,7 +52,7 @@ export default function RiderMapScreen({ navigation }) {
   });
   const [tracking, setTracking] = useState(false);
 
-  // Petron San Pedro Station coordinates (default)
+  // MKC Foods reference coordinates (default)
   const SAN_PEDRO_COORDS = {
     lat: 9.7534772,
     lng: 118.7478688

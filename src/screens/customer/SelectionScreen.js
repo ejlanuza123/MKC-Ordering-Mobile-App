@@ -15,7 +15,6 @@ import {
   Animated
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import ProductCard from '../../components/ProductCard';
@@ -40,7 +39,7 @@ const debounce = (func, wait) => {
 };
 
 export default function SelectionScreen({ navigation, route }) {
-  const { products, loading, refreshProducts, getProductsByCategory, hasRealtimeUpdates } = useProducts();
+  const { products, loading, refreshProducts, hasRealtimeUpdates, getProductCategories } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,7 +56,8 @@ export default function SelectionScreen({ navigation, route }) {
     message: ''
   });
 
-  const selectedCategory = route.params?.category || 'Fuel';
+  const availableCategories = ['All', ...getProductCategories()];
+  const selectedCategory = route.params?.category || 'All';
   const tabTranslateX = useRef(new Animated.Value(0)).current;
 
   // favorites handled by context
@@ -77,7 +77,7 @@ export default function SelectionScreen({ navigation, route }) {
       return;
     }
     
-    const defaultQuantity = product.category === 'Fuel' ? 1 : 1;
+    const defaultQuantity = 1;
     const totalItemPrice = product.current_price * defaultQuantity;
     
     addToCart(product, defaultQuantity, totalItemPrice);
@@ -99,10 +99,8 @@ export default function SelectionScreen({ navigation, route }) {
     let filtered = [...productsList];
     
     // Filter by category
-    if (category === 'Fuel') {
-      filtered = filtered.filter(product => product.category === 'Fuel');
-    } else {
-      filtered = filtered.filter(product => product.category !== 'Fuel');
+    if (category !== 'All') {
+      filtered = filtered.filter(product => product.category === category);
     }
     
     // Filter by search query
@@ -178,16 +176,16 @@ export default function SelectionScreen({ navigation, route }) {
   }, [products, sortBy, searchQuery, selectedCategory, applyFilters]);
 
   useEffect(() => {
-    const tabWidth = tabContainerWidth / 2;
+    const tabWidth = availableCategories.length ? tabContainerWidth / availableCategories.length : 0;
     if (!tabWidth) return;
 
-    const tabIndex = selectedCategory === 'Fuel' ? 0 : 1;
+    const tabIndex = Math.max(0, availableCategories.indexOf(selectedCategory));
     Animated.timing(tabTranslateX, {
       toValue: tabIndex * tabWidth,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [selectedCategory, tabContainerWidth, tabTranslateX]);
+  }, [availableCategories, selectedCategory, tabContainerWidth, tabTranslateX]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -200,13 +198,8 @@ export default function SelectionScreen({ navigation, route }) {
 
   const handleCategoryChange = (category) => {
     setSearchQuery('');
-    if (category === 'Fuel') {
-      navigation.setParams({ category: 'Fuel' });
-      applyFilters(products, '', sortBy, 'Fuel');
-    } else {
-      navigation.setParams({ category: 'Motor Oil' });
-      applyFilters(products, '', sortBy, 'Motor Oil');
-    }
+    navigation.setParams({ category });
+    applyFilters(products, '', sortBy, category);
   };
 
   // Get sort label text
@@ -235,13 +228,10 @@ export default function SelectionScreen({ navigation, route }) {
               
               <View style={styles.headerTitleContainer}>
                 <Text style={styles.headerTitle}>
-                  {selectedCategory === 'Fuel' ? 'Fuel Products' : 'Lubricants'}
+                  {selectedCategory === 'All' ? 'MKC Products' : selectedCategory}
                 </Text>
                 <Text style={styles.headerSubtitle}>
-                  {selectedCategory === 'Fuel' 
-                    ? 'Premium fuels delivered to you' 
-                    : 'High-quality lubricants'
-                  }
+                  Browse the full MKC foods catalog
                 </Text>
               </View>
               
@@ -275,51 +265,34 @@ export default function SelectionScreen({ navigation, route }) {
                 style={[
                   styles.categoryTabIndicator,
                   {
-                    width: tabContainerWidth / 2 - 4,
+                    width: tabContainerWidth / availableCategories.length - 4,
                     transform: [{ translateX: tabTranslateX }],
                   },
                 ]}
               />
             )}
-            <TouchableOpacity 
-              style={[
-                styles.categoryTab,
-                selectedCategory === 'Fuel' && styles.activeCategoryTab
-              ]}
-              onPress={() => handleCategoryChange('Fuel')}
-            >
-              <Ionicons 
-                name="water" 
-                size={20} 
-                color={selectedCategory === 'Fuel' ? '#fff' : '#0033A0'} 
-              />
-              <Text style={[
-                styles.categoryTabText,
-                selectedCategory === 'Fuel' && styles.activeCategoryTabText
-              ]}>
-                Fuel
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[
-                styles.categoryTab,
-                selectedCategory !== 'Fuel' && styles.activeCategoryTab
-              ]}
-              onPress={() => handleCategoryChange('Motor Oil')}
-            >
-              <Ionicons 
-                name="water" 
-                size={20} 
-                color={selectedCategory !== 'Fuel' ? '#fff' : '#ED2939'} 
-              />
-              <Text style={[
-                styles.categoryTabText,
-                selectedCategory !== 'Fuel' && styles.activeCategoryTabText
-              ]}>
-                Lubricants
-              </Text>
-            </TouchableOpacity>
+            {availableCategories.map((category) => (
+              <TouchableOpacity 
+                key={category}
+                style={[
+                  styles.categoryTab,
+                  selectedCategory === category && styles.activeCategoryTab
+                ]}
+                onPress={() => handleCategoryChange(category)}
+              >
+                <Ionicons 
+                  name={category === 'All' ? 'apps' : 'pricetag'} 
+                  size={20} 
+                  color={selectedCategory === category ? '#fff' : '#0033A0'} 
+                />
+                <Text style={[
+                  styles.categoryTabText,
+                  selectedCategory === category && styles.activeCategoryTabText
+                ]}>
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           {/* Search Bar */}
@@ -437,12 +410,12 @@ export default function SelectionScreen({ navigation, route }) {
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
                   <Ionicons 
-                    name={selectedCategory === 'Fuel' ? "water-outline" : "oil-outline"} 
+                    name="nutrition-outline" 
                     size={80} 
                     color="#ccc" 
                   />
                   <Text style={styles.emptyTitle}>
-                    {searchQuery ? 'No matching products found' : `No ${selectedCategory === 'Fuel' ? 'fuel' : 'lubricant'} products available`}
+                    {searchQuery ? 'No matching products found' : 'No products available in this category'}
                   </Text>
                   <Text style={styles.emptySubtitle}>
                     {searchQuery 

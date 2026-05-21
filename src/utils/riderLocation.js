@@ -229,7 +229,7 @@ export const geocodeAddress = async (address) => {
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
       {
         headers: {
-          'User-Agent': 'PetronSanPedroApp/1.0'
+          'User-Agent': 'MKCFoodsApp/2.0'
         }
       }
     );
@@ -259,7 +259,7 @@ export const reverseGeocode = async (latitude, longitude) => {
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
       {
         headers: {
-          'User-Agent': 'PetronSanPedroApp/1.0'
+          'User-Agent': 'MKCFoodsApp/2.0'
         }
       }
     );

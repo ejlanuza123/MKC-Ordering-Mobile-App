@@ -30,7 +30,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         2
       );
     });
@@ -53,11 +53,11 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         1
       );
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         2
       );
     });
@@ -78,7 +78,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 2 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 2 },
         0
       );
     });
@@ -86,7 +86,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 2 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 2 },
         3
       );
     });
@@ -106,7 +106,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         2
       );
     });
@@ -136,11 +136,11 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         2
       );
       readCtx.current.addToCart(
-        { id: 'p-2', name: 'Gasoline', current_price: 60, stock_quantity: 10 },
+        { id: 'p-2', name: 'MKC Chicken Wings', current_price: 60, stock_quantity: 10 },
         1
       );
     });
@@ -169,11 +169,11 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 3 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 3 },
         2
       );
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 3 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 3 },
         2
       );
     });
@@ -193,7 +193,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 4 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 4 },
         2
       );
     });
@@ -217,7 +217,7 @@ describe('CartContext', () => {
 
     act(() => {
       readCtx.current.addToCart(
-        { id: 'p-1', name: 'Diesel', current_price: 50, stock_quantity: 10 },
+        { id: 'p-1', name: 'MKC Chicken Breast', current_price: 50, stock_quantity: 10 },
         1
       );
     });

@@ -72,7 +72,7 @@ export default function MyFavoritesScreen({ navigation }) {
       setShowAlert(true);
       return;
     }
-    const defaultQuantity = product.category === 'Fuel' ? 1 : 1;
+    const defaultQuantity = 1;
     const totalItemPrice = product.current_price * defaultQuantity;
     addToCart(product, defaultQuantity, totalItemPrice);
     setAlertConfig({

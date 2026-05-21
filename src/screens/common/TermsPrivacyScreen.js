@@ -15,7 +15,7 @@ const TERMS_SECTIONS = [
   {
     title: '2. Service Scope',
     items: [
-      'The app provides order placement, delivery tracking, account management, and support workflows for Petron San Pedro.',
+      'The app provides order placement, delivery tracking, account management, and support workflows for MKC Foods Corporation.',
       'Service coverage, delivery windows, and product availability may change without prior notice.',
       'We may add, remove, or update features to improve operational performance and safety.',
     ],
@@ -126,7 +126,7 @@ const PRIVACY_SECTIONS = [
   {
     title: '7. Contact and Support',
     items: [
-      'For terms, privacy, or account concerns, contact support@petronsanpedro.com.',
+      'For terms, privacy, or account concerns, contact support@mkcfoods.com.',
       'For urgent account or delivery security issues, contact admin support immediately through official channels.',
     ],
   },

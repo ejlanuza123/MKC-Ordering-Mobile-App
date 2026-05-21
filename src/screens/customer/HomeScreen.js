@@ -35,8 +35,8 @@ const HOME_WELCOME_STEPS = [
   {
     icon: 'sparkles',
     color: '#0033A0',
-    title: 'Welcome to Petron San Pedro',
-    description: 'Order fuel and lubricants quickly, monitor your notifications, and manage your account in one place.',
+    title: 'Welcome to MKC Foods Corporation',
+    description: 'Browse food products quickly, monitor your notifications, and manage your account in one place.',
   },
   {
     icon: 'flash',
@@ -48,7 +48,7 @@ const HOME_WELCOME_STEPS = [
     icon: 'calendar',
     color: '#10B981',
     title: 'Reserve Your Station Slot',
-    description: 'Use Reserve to schedule walk-in or drive-in station refuel times and manage your reservations easily.',
+    description: 'Use Reserve to schedule product pickup or delivery times and manage your reservations easily.',
   },
 ];
 
@@ -243,14 +243,14 @@ export default function HomeScreen({ navigation, route }) {
           <View style={styles.brandContainerHeader}>
             <View style={styles.logoWrapperHeader}>
               <Image
-                source={require('../../../assets/petron-logo.jpg')}
-                style={styles.petronLogoHeader}
+                source={require('../../../assets/splash-icon.png')}
+                style={styles.brandLogoHeader}
                 resizeMode="contain"
               />
             </View>
             <View style={styles.brandTextContainer}>
-              <Text style={styles.brandTitleHeader}>Petron San Pedro</Text>
-              <Text style={styles.brandSubtitleHeader}>Fuel & Lubricants Delivery</Text>
+              <Text style={styles.brandTitleHeader}>MKC Foods Corporation</Text>
+              <Text style={styles.brandSubtitleHeader}>Food Products Delivery</Text>
             </View>
           </View>
 
@@ -402,7 +402,7 @@ export default function HomeScreen({ navigation, route }) {
           
           <TouchableOpacity 
             style={styles.orderNowButton}
-            onPress={() => navigation.navigate('Selection', { category: 'Fuel' })}
+            onPress={() => navigation.navigate('Selection', { category: 'All' })}
             activeOpacity={0.7}
           >
             <View style={styles.orderNowGradient}>
@@ -412,7 +412,7 @@ export default function HomeScreen({ navigation, route }) {
               <View style={styles.orderNowTextContainer}>
                 <Text style={styles.orderNowTitle}>Quick Order</Text>
                 <Text style={styles.orderNowSubtitle}>
-                  Get fuel delivered in 15-30 mins
+                  Get products delivered in 15-30 mins
                 </Text>
               </View>
               <View style={styles.orderNowArrow}>
@@ -477,7 +477,7 @@ export default function HomeScreen({ navigation, route }) {
                 <Ionicons name="shield" size={24} color="#ED2939" />
               </View>
               <Text style={styles.featureTitle}>100% Authentic</Text>
-              <Text style={styles.featureDescription}>Petron quality assured</Text>
+              <Text style={styles.featureDescription}>MKC quality assured</Text>
             </View>
 
             <View style={styles.featureCard}>
@@ -503,17 +503,17 @@ export default function HomeScreen({ navigation, route }) {
         <View style={styles.footerCard}>
           <View style={styles.footerHeader}>
             <Image 
-              source={require('../../../assets/petron-logo.jpg')} 
+              source={require('../../../assets/splash-icon.png')} 
               style={styles.footerLogo}
               resizeMode="contain"
             />
             <View>
-              <Text style={styles.footerTitle}>Petron San Pedro</Text>
+              <Text style={styles.footerTitle}>MKC Foods Corporation</Text>
               <Text style={styles.footerSubtitle}>Since 1980</Text>
             </View>
           </View>
           <Text style={styles.footerText}>
-            Premium quality fuel and lubricants delivered to your doorstep in San Pedro area. 
+            Premium quality MKC food products delivered to your doorstep.
             Available 24/7 for your convenience.
           </Text>
           <View style={styles.footerContact}>
@@ -523,7 +523,7 @@ export default function HomeScreen({ navigation, route }) {
             </View>
             <View style={styles.footerContactItem}>
               <Ionicons name="mail" size={16} color="#0033A0" />
-              <Text style={styles.footerContactText}> support@petronsanpedro.com</Text>
+              <Text style={styles.footerContactText}> support@mkcfoods.com</Text>
             </View>
           </View>
           <View style={styles.footerSocial}>
@@ -596,7 +596,7 @@ export default function HomeScreen({ navigation, route }) {
                 <View style={styles.choiceTextContainer}>
                   <Text style={styles.choiceTitle}>Rate a Product</Text>
                   <Text style={styles.choiceSubtitle}>
-                    Share your feedback about the fuel or lubricants
+                    Share your feedback about the products
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
     padding: 4,
     marginRight: 10,
   },
-  petronLogoHeader: {
+  brandLogoHeader: {
     width: 36,
     height: 36,
     borderRadius: 6,
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     padding: 5,
     marginRight: 12,
   },
-  petronLogo: {
+  brandLogo: {
     width: 45,
     height: 45,
     borderRadius: 8,

@@ -400,7 +400,7 @@ export default function LoginScreen({ navigation }) {
       }
 
       await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: 'petronapp://auth/reset-password',
+        redirectTo: 'mkcfoodsapp://auth/reset-password',
       });
       setShowResetModal(false);
       setResetEmail('');
@@ -524,13 +524,13 @@ export default function LoginScreen({ navigation }) {
           <Animated.View style={[styles.logoContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
             <View style={styles.logoWrapper}>
               <Image 
-                source={require('../../../assets/petron-logo.jpg')} 
+                source={require('../../../assets/splash-icon.png')} 
                 style={styles.logo}
                 resizeMode="contain"
               />
             </View>
             <Text style={styles.welcomeTitle}>Welcome Back!</Text>
-            <Text style={styles.welcomeSubtitle}>Sign in to continue to Petron San Pedro</Text>
+            <Text style={styles.welcomeSubtitle}>Sign in to continue to MKC Foods Corporation</Text>
           </Animated.View>
 
           {/* Form Section - Fixed height, no scrolling needed */}
@@ -638,8 +638,8 @@ export default function LoginScreen({ navigation }) {
 
           {/* Footer */}
           <Animated.View style={[styles.footer, { opacity: footerOpacity, transform: [{ translateY: footerTranslateY }] }]}>
-            <Text style={styles.footerText}>© 2026 Petron San Pedro</Text>
-            <Text style={styles.footerSubtext}>Fuel & Oil Delivery Service</Text>
+            <Text style={styles.footerText}>© 2026 MKC Foods Corporation</Text>
+            <Text style={styles.footerSubtext}>Food Delivery Service</Text>
           </Animated.View>
         </View>
       </KeyboardAvoidingView>
@@ -806,7 +806,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0033A0', // Changed to Petron blue for gradient effect
+    backgroundColor: '#0033A0',
   },
   keyboardView: {
     flex: 1,

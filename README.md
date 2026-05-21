@@ -1,4 +1,4 @@
-# Petron San Pedro Mobile App
+# MKC Foods Mobile App
 
 React Native + Expo application for customer ordering, rider delivery workflows, offline queueing, tracking, and mobile notifications.
 
@@ -53,7 +53,7 @@ Keep `.env.local` out of source control.
 ## Install
 
 ```bash
-cd PetronSanPedroApp
+cd mkc-mobile-app
 npm install
 ```
 

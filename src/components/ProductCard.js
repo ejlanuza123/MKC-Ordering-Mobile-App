@@ -10,18 +10,21 @@ export default function ProductCard({
   onToggleFavorite,
   showActionHint = true,
 }) {
-  const isFuel = product.category === 'Fuel';
+  const categoryMeta = {
+    'Whole Chicken': { color: '#0F766E', icon: 'restaurant' },
+    'Cut-Ups & Portions': { color: '#B91C1C', icon: 'layers' },
+    'Ready-to-Cook': { color: '#D97706', icon: 'flame' },
+    Giblets: { color: '#15803D', icon: 'leaf' },
+    'Class-B / Unbranded': { color: '#6B7280', icon: 'pricetag' }
+  };
+  const meta = categoryMeta[product.category] || { color: '#0033A0', icon: 'cube' };
   
   const getCategoryColor = () => {
-    if (isFuel) return '#0033A0'; // Petron Blue for Fuel
-    if (product.category === 'Motor Oil') return '#10B981';
-    if (product.category === 'Engine Oil') return '#F59E0B';
-    return '#ED2939'; // Petron Red for others
+    return meta.color;
   };
 
   const getCategoryIcon = () => {
-    if (isFuel) return 'water';
-    return 'oil';
+    return meta.icon;
   };
 
   const handleAddToCart = () => {
@@ -59,9 +62,7 @@ export default function ProductCard({
         {/* Category Badge */}
         <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor() }]}>
           <Text style={styles.categoryBadgeText}>
-            {product.category === 'Fuel' ? 'FUEL' : 
-             product.category === 'Motor Oil' ? 'MOTOR OIL' : 
-             product.category === 'Engine Oil' ? 'ENGINE OIL' : 'LUBRICANT'}
+            {product.category || 'PRODUCT'}
           </Text>
         </View>
         

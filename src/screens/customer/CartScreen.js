@@ -25,7 +25,6 @@ export default function CartScreen({ navigation }) {
   const [itemToRemove, setItemToRemove] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
-  const [editMode, setEditMode] = useState('liters');
   const [editValue, setEditValue] = useState('1');
 
   const fetchDefaultDeliveryFee = useCallback(async () => {
@@ -73,12 +72,8 @@ export default function CartScreen({ navigation }) {
   };
 
   const handleEditPress = (item) => {
-    const isFuel = item.category === 'Fuel';
-    const mode = isFuel ? 'liters' : 'bottle';
-
     setItemToEdit(item);
-    setEditMode(mode);
-    setEditValue(isFuel ? String(item.quantity.toFixed(2)) : String(item.quantity));
+    setEditValue(String(item.quantity ?? 1));
     setEditModalVisible(true);
   };
 
@@ -92,19 +87,6 @@ export default function CartScreen({ navigation }) {
       return { quantity: 0, total: 0 };
     }
 
-    if (itemToEdit.category === 'Fuel') {
-      if (editMode === 'amount') {
-        const liters = parsed / itemToEdit.current_price;
-        return { quantity: liters, total: parsed };
-      }
-      return { quantity: parsed, total: parsed * itemToEdit.current_price };
-    }
-
-    if (editMode === 'amount') {
-      const bottles = parsed / itemToEdit.current_price;
-      return { quantity: bottles, total: parsed };
-    }
-
     return { quantity: parsed, total: parsed * itemToEdit.current_price };
   };
 
@@ -116,10 +98,7 @@ export default function CartScreen({ navigation }) {
       return;
     }
 
-    const normalizedQuantity =
-      itemToEdit.category === 'Fuel'
-        ? parseFloat(quantity.toFixed(2))
-        : Math.max(1, Math.round(quantity));
+    const normalizedQuantity = parseFloat(quantity.toFixed(2));
 
     if (itemToEdit.stock_quantity !== undefined && normalizedQuantity > itemToEdit.stock_quantity) {
       return;
@@ -131,7 +110,9 @@ export default function CartScreen({ navigation }) {
   };
 
   const renderItem = ({ item }) => {
-    const isFuel = item.category === 'Fuel';
+    const formattedQuantity = Number.isInteger(item.quantity)
+      ? String(item.quantity)
+      : Number(item.quantity).toFixed(2);
     
     return (
       <TouchableOpacity style={styles.cartItem} activeOpacity={0.85} onPress={() => handleEditPress(item)}>
@@ -149,9 +130,7 @@ export default function CartScreen({ navigation }) {
           
           <View style={styles.itemDetailsRow}>
             <Text style={styles.itemDetails}>
-              {isFuel 
-                ? `${item.quantity.toFixed(2)} Liters` 
-                : `${item.quantity} ${item.unit}(s)`} 
+              {formattedQuantity} {item.unit || 'pcs'} 
               {' @ '}₱{item.current_price.toFixed(2)}
             </Text>
             <Text style={styles.itemTotal}>
@@ -160,7 +139,7 @@ export default function CartScreen({ navigation }) {
           </View>
 
           <Text style={styles.editHintText}>
-            Tap item to edit by {isFuel ? 'liters/amount' : 'bottle/amount'}
+            Tap item to edit quantity
           </Text>
         </View>
       </TouchableOpacity>
@@ -193,7 +172,7 @@ export default function CartScreen({ navigation }) {
           </View>
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
           <Text style={styles.emptySubtitle}>
-            Add some fuel or lubricants to get started
+            Add some products to get started
           </Text>
           <TouchableOpacity 
             style={styles.shopButton}
@@ -230,7 +209,7 @@ export default function CartScreen({ navigation }) {
         <View style={styles.modalOverlayEditor}>
           <View style={styles.modalCardEditor}>
             <View style={styles.modalEditorHeader}>
-              <Text style={styles.modalEditorTitle}>Edit Order Amount</Text>
+              <Text style={styles.modalEditorTitle}>Edit Quantity</Text>
               <TouchableOpacity onPress={() => setEditModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#374151" />
               </TouchableOpacity>
@@ -241,66 +220,18 @@ export default function CartScreen({ navigation }) {
                 <Text style={styles.modalEditorItemName}>{itemToEdit.name}</Text>
                 <Text style={styles.modalEditorItemPrice}>₱{itemToEdit.current_price.toFixed(2)} per {itemToEdit.unit}</Text>
 
-                <View style={styles.modalModeRow}>
-                  {itemToEdit.category === 'Fuel' ? (
-                    <>
-                      <TouchableOpacity
-                        style={[styles.modalModeBtn, editMode === 'liters' && styles.modalModeBtnActive]}
-                        onPress={() => {
-                          setEditMode('liters');
-                          setEditValue(String(itemToEdit.quantity.toFixed(2)));
-                        }}
-                      >
-                        <Text style={[styles.modalModeText, editMode === 'liters' && styles.modalModeTextActive]}>By Liters</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.modalModeBtn, editMode === 'amount' && styles.modalModeBtnActive]}
-                        onPress={() => {
-                          setEditMode('amount');
-                          setEditValue(String(itemToEdit.totalItemPrice.toFixed(2)));
-                        }}
-                      >
-                        <Text style={[styles.modalModeText, editMode === 'amount' && styles.modalModeTextActive]}>By Amount</Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <>
-                      <TouchableOpacity
-                        style={[styles.modalModeBtn, editMode === 'bottle' && styles.modalModeBtnActive]}
-                        onPress={() => {
-                          setEditMode('bottle');
-                          setEditValue(String(itemToEdit.quantity));
-                        }}
-                      >
-                        <Text style={[styles.modalModeText, editMode === 'bottle' && styles.modalModeTextActive]}>By Bottle</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.modalModeBtn, editMode === 'amount' && styles.modalModeBtnActive]}
-                        onPress={() => {
-                          setEditMode('amount');
-                          setEditValue(String(itemToEdit.totalItemPrice.toFixed(2)));
-                        }}
-                      >
-                        <Text style={[styles.modalModeText, editMode === 'amount' && styles.modalModeTextActive]}>By Amount</Text>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                </View>
-
                 <View style={styles.modalInputWrap}>
                   <TextInput
                     style={styles.modalInput}
                     keyboardType="numeric"
                     value={editValue}
                     onChangeText={(text) => setEditValue(text.replace(/[^0-9.]/g, ''))}
-                    placeholder={editMode === 'amount' ? 'Enter amount' : 'Enter quantity'}
+                    placeholder="Enter quantity"
                   />
                 </View>
 
                 <View style={styles.modalSummaryBox}>
-                  <Text style={styles.modalSummaryText}>
-                    Qty: {itemToEdit.category === 'Fuel' ? getEditedMetrics().quantity.toFixed(2) : Math.max(1, Math.round(getEditedMetrics().quantity || 0))}
-                  </Text>
+                  <Text style={styles.modalSummaryText}>Qty: {getEditedMetrics().quantity.toFixed(2)}</Text>
                   <Text style={styles.modalSummaryText}>
                     Total: ₱{getEditedMetrics().total.toFixed(2)}
                   </Text>
