@@ -115,13 +115,13 @@ Use these quick checks to confirm the machine is ready for backup and restore wo
 ### Check Supabase connectivity
 
 ```powershell
-Test-NetConnection aws-1-ap-south-1.pooler.supabase.com -Port 5432
+Test-NetConnection aws-1-ap-northeast-1.pooler.supabase.com -Port 5432
 ```
 
 ### Test backup command
 
 ```powershell
-pg_dump -h aws-1-ap-south-1.pooler.supabase.com -p 5432 -U postgres.etypzzzobbacpvwvjhuf -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup.dump"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup.dump"
 ```
 
 ### Test local restore command
