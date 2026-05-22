@@ -49,8 +49,8 @@ export default function CustomerDeliveryTrackingScreen({ navigation, route }) {
   const [lastSeen, setLastSeen] = useState(null);
 
   const buildMapHtml = useCallback(() => {
-    const destinationLat = destination?.lat ?? 9.7534772;
-    const destinationLng = destination?.lng ?? 118.7478688;
+    const destinationLat = destination?.lat ?? 9.7394855;
+    const destinationLng = destination?.lng ?? 118.7413605;
 
     return `
       <!DOCTYPE html>

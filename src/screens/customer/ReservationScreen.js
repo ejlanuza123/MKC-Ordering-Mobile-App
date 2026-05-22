@@ -1361,14 +1361,14 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     flex: 1,
-    backgroundColor: '#ED2939',
+    backgroundColor: '#0033A0',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
   },
   noticeActionButton: {
-    backgroundColor: '#ED2939',
+    backgroundColor: '#0033A0',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

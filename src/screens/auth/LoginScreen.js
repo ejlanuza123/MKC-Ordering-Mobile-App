@@ -520,11 +520,13 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.decorationCircle2} />
           </View>
 
+          {/* Bottom yellow accent blob */}
+          <View style={styles.backgroundBlobBottom} />
           {/* Logo and Welcome Section */}
           <Animated.View style={[styles.logoContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
             <View style={styles.logoWrapper}>
               <Image 
-                source={require('../../../assets/splash-icon.png')} 
+                source={require('../../../assets/mkc-logo.png')} 
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -842,6 +844,16 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+      // Bottom yellow accent
+      backgroundBlobBottom: {
+        position: 'absolute',
+        bottom: -60,
+        left: -40,
+        width: 180,
+        height: 180,
+        borderRadius: 90,
+        backgroundColor: 'rgba(245,158,11,0.1)',
+      },
     backgroundColor: 'rgba(255,255,255,0.1)',
   },
   // Logo Section

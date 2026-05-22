@@ -246,7 +246,7 @@ export default function IntroScreen({ onGetStarted }) {
 
       {stage === 'hero' ? (
         <Animated.View style={[styles.logoCard, { transform: [{ scale: logoScaleAnim }, { translateY: logoMoveAnim }] }]}>
-          <Image source={require('../../../assets/splash-icon.png')} style={styles.logo} resizeMode="contain" />
+          <Image source={require('../../../assets/mkc-logo.png')} style={styles.logo} resizeMode="contain" />
         </Animated.View>
       ) : null}
 
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: 'rgba(237, 41, 57, 0.22)',
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
     bottom: -60,
     left: -40,
   },

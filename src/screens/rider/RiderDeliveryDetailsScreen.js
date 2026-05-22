@@ -806,17 +806,6 @@ export default function RiderDeliveryDetailsScreen({ route, navigation }) {
             </View>
             <Text style={styles.quickActionText}>Call</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.quickAction}
-            onPress={handleChatCustomer}
-            disabled={openingChat}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#0033A015' }]}>
-              <Ionicons name={openingChat ? 'hourglass' : 'chatbubble-ellipses'} size={24} color="#0033A0" />
-            </View>
-            <Text style={styles.quickActionText}>{openingChat ? 'Opening' : 'Chat'}</Text>
-          </TouchableOpacity>
           
           <TouchableOpacity style={styles.quickAction} onPress={messageCustomer}>
             <View style={[styles.quickActionIcon, { backgroundColor: '#10B98120' }]}>

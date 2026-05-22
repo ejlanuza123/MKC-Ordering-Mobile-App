@@ -15,6 +15,7 @@ import {
   Animated
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import ProductCard from '../../components/ProductCard';
@@ -39,13 +40,14 @@ const debounce = (func, wait) => {
 };
 
 export default function SelectionScreen({ navigation, route }) {
+  const insets = useSafeAreaInsets();
   const { products, loading, refreshProducts, hasRealtimeUpdates, getProductCategories } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState('name_asc');
-  const [tabContainerWidth, setTabContainerWidth] = useState(0);
   const { cartItems, addToCart } = useCart();
   const { user } = useAuth();
   const [showAlert, setShowAlert] = useState(false);
@@ -58,7 +60,6 @@ export default function SelectionScreen({ navigation, route }) {
 
   const availableCategories = ['All', ...getProductCategories()];
   const selectedCategory = route.params?.category || 'All';
-  const tabTranslateX = useRef(new Animated.Value(0)).current;
 
   // favorites handled by context
   const { isFavorite, toggleFavorite, favorites } = useFavorites();
@@ -175,18 +176,6 @@ export default function SelectionScreen({ navigation, route }) {
     }
   }, [products, sortBy, searchQuery, selectedCategory, applyFilters]);
 
-  useEffect(() => {
-    const tabWidth = availableCategories.length ? tabContainerWidth / availableCategories.length : 0;
-    if (!tabWidth) return;
-
-    const tabIndex = Math.max(0, availableCategories.indexOf(selectedCategory));
-    Animated.timing(tabTranslateX, {
-      toValue: tabIndex * tabWidth,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }, [availableCategories, selectedCategory, tabContainerWidth, tabTranslateX]);
-
   const onRefresh = () => {
     setRefreshing(true);
     refreshProducts().finally(() => setRefreshing(false));
@@ -200,6 +189,7 @@ export default function SelectionScreen({ navigation, route }) {
     setSearchQuery('');
     navigation.setParams({ category });
     applyFilters(products, '', sortBy, category);
+    setCategoryModalVisible(false);
   };
 
   // Get sort label text
@@ -217,7 +207,7 @@ export default function SelectionScreen({ navigation, route }) {
     <SafeAreaWrapper backgroundColor="#f8f9fa" barStyle="dark-content">
       <View style={styles.container}>
         {/* Custom Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <View style={styles.headerTop}>
               <TouchableOpacity 
                 onPress={() => navigation.navigate('Home')}
@@ -255,45 +245,20 @@ export default function SelectionScreen({ navigation, route }) {
               </View>
             </View>
 
-          {/* Category Tabs */}
-          <View
-            style={styles.categoryTabs}
-            onLayout={(event) => setTabContainerWidth(event.nativeEvent.layout.width)}
+          {/* Category Picker */}
+          <TouchableOpacity
+            style={styles.categoryPickerButton}
+            onPress={() => setCategoryModalVisible(true)}
+            activeOpacity={0.9}
           >
-            {!!tabContainerWidth && (
-              <Animated.View
-                style={[
-                  styles.categoryTabIndicator,
-                  {
-                    width: tabContainerWidth / availableCategories.length - 4,
-                    transform: [{ translateX: tabTranslateX }],
-                  },
-                ]}
-              />
-            )}
-            {availableCategories.map((category) => (
-              <TouchableOpacity 
-                key={category}
-                style={[
-                  styles.categoryTab,
-                  selectedCategory === category && styles.activeCategoryTab
-                ]}
-                onPress={() => handleCategoryChange(category)}
-              >
-                <Ionicons 
-                  name={category === 'All' ? 'apps' : 'pricetag'} 
-                  size={20} 
-                  color={selectedCategory === category ? '#fff' : '#0033A0'} 
-                />
-                <Text style={[
-                  styles.categoryTabText,
-                  selectedCategory === category && styles.activeCategoryTabText
-                ]}>
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+            <View style={styles.categoryPickerCopy}>
+              <Text style={styles.categoryPickerLabel}>Category</Text>
+              <Text style={styles.categoryPickerValue} numberOfLines={1}>
+                {selectedCategory === 'All' ? 'All Categories' : selectedCategory}
+              </Text>
+            </View>
+            <Ionicons name="chevron-down" size={18} color="#0033A0" />
+          </TouchableOpacity>
 
           {/* Search Bar */}
           <View style={styles.searchBar}>
@@ -562,6 +527,61 @@ export default function SelectionScreen({ navigation, route }) {
             </View>
           </TouchableOpacity>
         </Modal>
+
+        {/* Category Modal */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={categoryModalVisible}
+          onRequestClose={() => setCategoryModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setCategoryModalVisible(false)}
+          >
+            <View style={styles.categoryModalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Choose Category</Text>
+                <TouchableOpacity
+                  onPress={() => setCategoryModalVisible(false)}
+                  style={styles.modalCloseButton}
+                >
+                  <Ionicons name="close" size={24} color="#666" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={styles.categoryOptions}>
+                {availableCategories.map((category) => {
+                  const isSelected = selectedCategory === category;
+
+                  return (
+                    <TouchableOpacity
+                      key={category}
+                      style={[
+                        styles.categoryOption,
+                        isSelected && styles.categoryOptionSelected,
+                      ]}
+                      onPress={() => handleCategoryChange(category)}
+                    >
+                      <View style={styles.categoryOptionIconWrap}>
+                        <Ionicons
+                          name={category === 'All' ? 'apps' : 'pricetag'}
+                          size={20}
+                          color={isSelected ? '#0033A0' : '#666'}
+                        />
+                      </View>
+                      <Text style={[styles.categoryOptionText, isSelected && styles.categoryOptionTextSelected]}>
+                        {category}
+                      </Text>
+                      {isSelected ? <Ionicons name="checkmark" size={20} color="#0033A0" /> : null}
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
       <CustomAlertModal
         visible={showAlert}
@@ -582,8 +602,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 20,
+    paddingBottom: 15,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
@@ -592,7 +611,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   headerActions: {
     flexDirection: 'row',
@@ -603,7 +622,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   backButton: {
     width: 40,
@@ -654,7 +673,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   categoryTabs: {
-    flexDirection: 'row',
     backgroundColor: '#f0f4ff',
     borderRadius: 12,
     padding: 4,
@@ -662,20 +680,46 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  categoryTabIndicator: {
-    position: 'absolute',
-    top: 2,
-    bottom: 2,
-    left: 2,
-    borderRadius: 9,
-    backgroundColor: '#0033A0',
+  categoryTabsContent: {
+    paddingRight: 4,
+  },
+  categoryPickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f0f4ff',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#d9e3ff',
+  },
+  categoryPickerCopy: {
+    flex: 1,
+    marginRight: 12,
+  },
+  categoryPickerLabel: {
+    color: '#5B6B85',
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    marginBottom: 2,
+  },
+  categoryPickerValue: {
+    color: '#0033A0',
+    fontSize: 16,
+    fontWeight: '700',
   },
   categoryTab: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    flexGrow: 0,
+    flexShrink: 0,
     paddingVertical: 10,
+    paddingHorizontal: 14,
     borderRadius: 8,
     zIndex: 1,
   },
@@ -683,7 +727,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   categoryTabText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#666',
     marginLeft: 8,
@@ -855,6 +899,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
+  categoryModalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingBottom: 24,
+    maxHeight: '78%',
+  },
   modalContent: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
@@ -880,6 +931,42 @@ const styles = StyleSheet.create({
   },
   sortOptions: {
     paddingHorizontal: 20,
+  },
+  categoryOptions: {
+    paddingHorizontal: 20,
+  },
+  categoryOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  categoryOptionSelected: {
+    backgroundColor: '#f0f4ff',
+    marginHorizontal: -20,
+    paddingHorizontal: 20,
+  },
+  categoryOptionIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#dbe4ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  categoryOptionText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '600',
+  },
+  categoryOptionTextSelected: {
+    color: '#0033A0',
+    fontWeight: '700',
   },
   sortOption: {
     flexDirection: 'row',

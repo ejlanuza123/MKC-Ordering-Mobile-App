@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "MKC Foods App",
-    "slug": "MKCFoodsApp",
+    "name": "MKC Ordering App",
+    "slug": "MKCOrderingApp",
     "version": "2.0.0",
-    "scheme": "mkcfoodsapp",
+    "scheme": "mkcorderingapp",
     "orientation": "portrait",
     "icon": "./assets/mkc-logo.png",
     "userInterfaceStyle": "light",
@@ -16,8 +16,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow MKC Foods App to access your camera to take profile pictures.",
-        "NSPhotoLibraryUsageDescription": "Allow MKC Foods App to access your photos to set your profile picture."
+        "NSCameraUsageDescription": "Allow MKC Ordering App to access your camera to take profile pictures.",
+        "NSPhotoLibraryUsageDescription": "Allow MKC Ordering App to access your photos to set your profile picture."
       }
     },
     "android": {
@@ -43,14 +43,14 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow MKC Foods App to use your location to accurately pinpoint your delivery address."
+          "locationAlwaysAndWhenInUsePermission": "Allow MKC Ordering App to use your location to accurately pinpoint your delivery address."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow MKC Foods App to access your photos to set your profile picture.",
-          "cameraPermission": "Allow MKC Foods App to access your camera to take profile pictures."
+          "photosPermission": "Allow MKC Ordering App to access your photos to set your profile picture.",
+          "cameraPermission": "Allow MKC Ordering App to access your camera to take profile pictures."
         }
       ]
     ],

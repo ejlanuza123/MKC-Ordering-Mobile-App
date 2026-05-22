@@ -13,6 +13,10 @@ const TIME_INTERVAL_TRIGGER_TYPE = Notifications.SchedulableTriggerInputTypes?.T
 const DATE_TRIGGER_TYPE = Notifications.SchedulableTriggerInputTypes?.DATE || 'date';
 let channelReady = false;
 
+const isAndroidExpoGo =
+  Platform.OS === 'android' &&
+  (Constants?.appOwnership === 'expo' || Constants?.executionEnvironment === 'storeClient');
+
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -57,6 +61,11 @@ export const mobileNotificationService = {
    */
   async getDevicePushToken() {
     try {
+      if (isAndroidExpoGo) {
+        console.warn('Android push notifications require a development build. Expo Go no longer supports remote notifications on SDK 53+.');
+        return null;
+      }
+
       if (!Device.isDevice) {
         console.warn('Push notifications only work on physical devices');
         return null;

@@ -32,8 +32,8 @@ export default function OpenStreetMapPicker({
 
   // MKC Foods coordinates
   const SAN_PEDRO_COORDS = {
-    lat: 9.7534772,
-    lng: 118.7478688
+    lat: 9.7394855,
+    lng: 118.7413605
   };
 
   // Smart formatter that fixes OSM's wrong boundary data
@@ -59,9 +59,9 @@ export default function OpenStreetMapPicker({
     );
 
     // If the pin is within ~1km of the reference point, force the local barangay label
-    // Because OSM wrongly maps this area as San Miguel/Tiniguiban
+    // Because OSM may not label the MKC area consistently
     if (distanceToReference < 0.01) {
-      parts.push("Barangay San Pedro");
+      parts.push("Puerto Princesa City");
     } else {
       // If they are far away, trust OSM's barangay data
       const brgy = addressData.suburb || addressData.village || addressData.neighbourhood || addressData.hamlet;

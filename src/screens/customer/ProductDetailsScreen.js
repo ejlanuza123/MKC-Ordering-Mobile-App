@@ -222,7 +222,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
             {/* Delivery Info */}
             <View style={styles.deliveryInfo}>
               <Ionicons name="time" size={20} color="#0033A0" />
-              <Text style={styles.deliveryText}>15-30 min delivery • San Pedro Area</Text>
+              <Text style={styles.deliveryText}>15-30 min delivery • Puerto Princesa Area</Text>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
   },
   deliveryText: {
     marginLeft: 8,
-    fontSize: 13,
+    fontSize: 12,
     color: '#0033A0',
     fontWeight: '500',
   },

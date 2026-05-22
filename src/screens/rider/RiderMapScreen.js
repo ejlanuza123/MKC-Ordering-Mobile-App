@@ -54,8 +54,8 @@ export default function RiderMapScreen({ navigation }) {
 
   // MKC Foods reference coordinates (default)
   const SAN_PEDRO_COORDS = {
-    lat: 9.7534772,
-    lng: 118.7478688
+    lat: 9.7394855,
+    lng: 118.7413605
   };
 
   // Generate map HTML with all delivery markers

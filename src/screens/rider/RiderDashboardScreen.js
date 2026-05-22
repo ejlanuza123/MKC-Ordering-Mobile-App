@@ -478,7 +478,7 @@ export default function RiderDashboardScreen({ navigation }) {
           <View style={styles.riderIdentity}>
             <View style={styles.riderLogoWrap}>
               <Image
-                source={require('../../../assets/splash-icon.png')}
+                source={require('../../../assets/mkc-logo.png')}
                 style={styles.riderLogo}
                 resizeMode="contain"
               />

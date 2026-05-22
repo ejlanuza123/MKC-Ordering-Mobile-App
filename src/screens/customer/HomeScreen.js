@@ -243,7 +243,7 @@ export default function HomeScreen({ navigation, route }) {
           <View style={styles.brandContainerHeader}>
             <View style={styles.logoWrapperHeader}>
               <Image
-                source={require('../../../assets/splash-icon.png')}
+                source={require('../../../assets/mkc-logo.png')}
                 style={styles.brandLogoHeader}
                 resizeMode="contain"
               />
@@ -453,7 +453,7 @@ export default function HomeScreen({ navigation, route }) {
               <Ionicons name="location" size={20} color="#fff" />
             </View>
             <View style={styles.statInfo}>
-              <Text style={styles.statValue}>San Pedro</Text>
+              <Text style={styles.statValue}>Puerto Princesa</Text>
               <Text style={styles.statLabel}>Coverage</Text>
             </View>
           </View>
@@ -503,7 +503,7 @@ export default function HomeScreen({ navigation, route }) {
         <View style={styles.footerCard}>
           <View style={styles.footerHeader}>
             <Image 
-              source={require('../../../assets/splash-icon.png')} 
+              source={require('../../../assets/mkc-logo.png')} 
               style={styles.footerLogo}
               resizeMode="contain"
             />
@@ -1033,7 +1033,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statValue: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
   },
