@@ -266,7 +266,7 @@ export default function IntroScreen({ onGetStarted }) {
           <Animated.View style={{ opacity: heroButtonOpacity, width: '100%' }}>
             <TouchableOpacity style={[styles.ctaButton, styles.heroCtaButton]} activeOpacity={0.9} onPress={handleStartInfo}>
               <Text style={styles.ctaText}>Get Started</Text>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
+              <Ionicons name="arrow-forward" size={18} color="#0033A0" />
             </TouchableOpacity>
           </Animated.View>
         </Animated.View>
@@ -372,7 +372,7 @@ export default function IntroScreen({ onGetStarted }) {
                 disabled={isTransitioning}
               >
                 <Text style={styles.ctaText}>{isLastInfoSlide ? 'Login Now' : 'Next'}</Text>
-                <Ionicons name="arrow-forward" size={18} color="#fff" />
+                <Ionicons name="arrow-forward" size={18} color="#0033A0" />
               </TouchableOpacity>
             </View>
           </View>
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   logoCard: {
     width: 120,
     height: 120,
-    borderRadius: 20,
+    borderRadius: 60,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 114,
     height: 114,
-    borderRadius: 16,
+    borderRadius: 57,
   },
   heroContent: {
     width: '100%',
@@ -623,16 +623,16 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     marginTop: 24,
-    backgroundColor: '#ED2939',
+    backgroundColor: '#F4C430',
     borderRadius: 14,
     height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: '#000',
+    shadowColor: '#B08900',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.22,
     shadowRadius: 12,
     elevation: 8,
   },
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   ctaText: {
-    color: '#fff',
+    color: '#0033A0',
     fontSize: 17,
     fontWeight: '700',
   },

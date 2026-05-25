@@ -472,6 +472,12 @@ export default function RiderDashboardScreen({ navigation }) {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
+      <View style={styles.backgroundCanvas} pointerEvents="none">
+        <View style={[styles.backgroundOrb, styles.backgroundOrbTop]} />
+        <View style={[styles.backgroundOrb, styles.backgroundOrbMid]} />
+        <View style={[styles.backgroundOrb, styles.backgroundOrbBottom]} />
+      </View>
+
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
@@ -896,6 +902,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
+  backgroundCanvas: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#EEF3FF',
+    overflow: 'hidden',
+  },
+  backgroundOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 1,
+  },
+  backgroundOrbTop: {
+    top: -40,
+    left: -70,
+    width: 220,
+    height: 220,
+    backgroundColor: 'rgba(0, 51, 160, 0.12)',
+  },
+  backgroundOrbMid: {
+    top: 120,
+    right: -90,
+    width: 260,
+    height: 260,
+    backgroundColor: 'rgba(244, 196, 48, 0.16)',
+  },
+  backgroundOrbBottom: {
+    bottom: -120,
+    left: '20%',
+    width: 320,
+    height: 320,
+    backgroundColor: 'rgba(0, 51, 160, 0.08)',
+  },
   scrollView: {
     flex: 1,
     zIndex: 0,
@@ -940,17 +977,19 @@ const styles = StyleSheet.create({
   riderLogoWrap: {
     width: 42,
     height: 42,
-    borderRadius: 10,
-    backgroundColor: '#0033A0',
+    borderRadius: 21,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
     padding: 3,
+    borderWidth: 2,
+    borderColor: '#F4C430',
   },
   riderLogo: {
     width: 34,
     height: 34,
-    borderRadius: 6,
+    borderRadius: 17,
   },
   greeting: {
     fontSize: 14,

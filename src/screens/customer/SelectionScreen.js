@@ -206,6 +206,11 @@ export default function SelectionScreen({ navigation, route }) {
   return (
     <SafeAreaWrapper backgroundColor="#f8f9fa" barStyle="dark-content">
       <View style={styles.container}>
+        <View style={styles.backgroundCanvas} pointerEvents="none">
+          <View style={[styles.backgroundOrb, styles.backgroundOrbTop]} />
+          <View style={[styles.backgroundOrb, styles.backgroundOrbMid]} />
+          <View style={[styles.backgroundOrb, styles.backgroundOrbBottom]} />
+        </View>
         {/* Custom Header */}
         <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <View style={styles.headerTop}>
@@ -600,9 +605,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
+  backgroundCanvas: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#EEF3FF',
+    overflow: 'hidden',
+  },
+  backgroundOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 1,
+  },
+  backgroundOrbTop: {
+    top: -40,
+    left: -70,
+    width: 220,
+    height: 220,
+    backgroundColor: 'rgba(0, 51, 160, 0.12)',
+  },
+  backgroundOrbMid: {
+    top: 120,
+    right: -90,
+    width: 260,
+    height: 260,
+    backgroundColor: 'rgba(244, 196, 48, 0.16)',
+  },
+  backgroundOrbBottom: {
+    bottom: -120,
+    left: '20%',
+    width: 320,
+    height: 320,
+    backgroundColor: 'rgba(0, 51, 160, 0.08)',
+  },
   header: {
     backgroundColor: '#fff',
-    paddingBottom: 15,
+    paddingBottom: 10,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
@@ -611,7 +647,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   headerActions: {
     flexDirection: 'row',
@@ -690,8 +726,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f4ff',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 20,
+    paddingVertical: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#d9e3ff',
   },
@@ -744,6 +780,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 1,
     borderColor: '#e9ecef',
+    marginBottom: 10,
   },
   searchInput: {
     flex: 1,
@@ -774,8 +811,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
-    marginTop: 10,
+    marginBottom: 10,
+    marginTop: 4,
   },
   actionHintBanner: {
     flexDirection: 'row',
@@ -809,7 +846,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   showTipsButtonText: {
     marginLeft: 6,

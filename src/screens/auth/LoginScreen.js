@@ -610,7 +610,7 @@ export default function LoginScreen({ navigation }) {
               ) : (
                 <>
                   <Text style={styles.loginButtonText}>LOGIN</Text>
-                  <Ionicons name="arrow-forward" size={18} color="#fff" style={styles.loginButtonIcon} />
+                  <Ionicons name="arrow-forward" size={18} color="#0033A0" style={styles.loginButtonIcon} />
                 </>
               )}
             </TouchableOpacity>
@@ -864,7 +864,7 @@ const styles = StyleSheet.create({
   logoWrapper: {
     width: 120,
     height: 120,
-    borderRadius: 20,
+    borderRadius: 60,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -880,12 +880,12 @@ const styles = StyleSheet.create({
   logo: {
     width: 114,
     height: 114,
-    borderRadius: 16,
+    borderRadius: 57,
   },
   welcomeTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#F4C430',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -958,25 +958,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   loginButton: {
-    backgroundColor: '#0033A0',
+    backgroundColor: '#F4C430',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 16,
     elevation: 3,
-    shadowColor: '#0033A0',
+    shadowColor: '#B08900',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.22,
     shadowRadius: 6,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   loginButtonDisabled: {
-    backgroundColor: '#8da2c0',
+    backgroundColor: '#F7DE86',
     shadowOpacity: 0,
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#0033A0',
     fontSize: 16,
     fontWeight: 'bold',
     letterSpacing: 1,
@@ -1148,7 +1148,7 @@ const styles = StyleSheet.create({
     borderColor: '#cbd6e5',
   },
   modalConfirmButton: {
-    backgroundColor: '#0033A0',
+    backgroundColor: '#F4C430',
   },
   modalCancelText: {
     color: '#0033A0',
@@ -1156,7 +1156,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   modalConfirmText: {
-    color: '#fff',
+    color: '#0033A0',
     fontWeight: '600',
     fontSize: 14,
   },

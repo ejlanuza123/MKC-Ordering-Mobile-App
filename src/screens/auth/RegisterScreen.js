@@ -472,7 +472,7 @@ export default function RegisterScreen({ navigation }) {
                 ) : (
                   <>
                     <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
-                    <Ionicons name="arrow-forward" size={18} color="#fff" style={styles.buttonIcon} />
+                    <Ionicons name="arrow-forward" size={18} color="#0033A0" style={styles.buttonIcon} />
                   </>
                 )}
               </TouchableOpacity>
@@ -669,25 +669,25 @@ const styles = StyleSheet.create({
   },
   // Button
   button: {
-    backgroundColor: '#ED2939',
+    backgroundColor: '#F4C430',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 16,
     elevation: 3,
-    shadowColor: '#ED2939',
+    shadowColor: '#B08900',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.22,
     shadowRadius: 6,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#f8a5b0',
+    backgroundColor: '#F7DE86',
     shadowOpacity: 0,
   },
   buttonText: {
-    color: '#fff',
+    color: '#0033A0',
     fontWeight: 'bold',
     fontSize: 16,
     letterSpacing: 0.5,
@@ -822,7 +822,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   termsAcceptButton: {
-    backgroundColor: '#0033A0',
+    backgroundColor: '#F4C430',
     marginHorizontal: 20,
     marginTop: 8,
     borderRadius: 12,
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   termsAcceptButtonText: {
-    color: '#fff',
+    color: '#0033A0',
     fontSize: 15,
     fontWeight: '700',
   },

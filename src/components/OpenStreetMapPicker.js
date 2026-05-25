@@ -24,6 +24,8 @@ export default function OpenStreetMapPicker({
 }) {
   const insets = useSafeAreaInsets();
   const webViewRef = useRef(null);
+  const webViewReadyRef = useRef(false);
+  const pendingLocationRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [address, setAddress] = useState(initialAddress || '');
@@ -75,6 +77,21 @@ export default function OpenStreetMapPicker({
     parts.push('Palawan');
 
     return parts.join(', ');
+  };
+
+  const sendLocationToWebView = (latitude, longitude) => {
+    const payload = JSON.stringify({
+      type: 'SET_LOCATION',
+      lat: latitude,
+      lon: longitude
+    });
+
+    if (webViewRef.current && webViewReadyRef.current) {
+      webViewRef.current.postMessage(payload);
+      return;
+    }
+
+    pendingLocationRef.current = payload;
   };
 
   useEffect(() => {
@@ -267,11 +284,6 @@ export default function OpenStreetMapPicker({
           
           window.onload = function() {
             initMap(defaultLat, defaultLng);
-            // Fetch initial address for the default pin
-            setTimeout(() => {
-                // getAddressFromCoords is scoped inside initMap, let's trigger it via event
-                window.postMessage(JSON.stringify({type: 'SET_LOCATION', lat: defaultLat, lon: defaultLng}), '*');
-            }, 500);
           };
         </script>
       </body>
@@ -301,13 +313,7 @@ export default function OpenStreetMapPicker({
       });
       const { latitude, longitude } = location.coords;
       
-      if (webViewRef.current) {
-        webViewRef.current.postMessage(JSON.stringify({
-          type: 'SET_LOCATION',
-          lat: latitude,
-          lon: longitude
-        }));
-      }
+      sendLocationToWebView(latitude, longitude);
 
       setSelectedLocation({ latitude, longitude });
       
@@ -421,7 +427,16 @@ export default function OpenStreetMapPicker({
             ref={webViewRef}
             source={{ html: mapHtml }}
             onMessage={handleWebViewMessage}
-            onLoadEnd={() => setLoading(false)}
+            onLoadEnd={() => {
+              webViewReadyRef.current = true;
+
+              if (pendingLocationRef.current && webViewRef.current) {
+                webViewRef.current.postMessage(pendingLocationRef.current);
+                pendingLocationRef.current = null;
+              }
+
+              setLoading(false);
+            }}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             style={styles.webview}

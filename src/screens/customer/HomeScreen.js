@@ -40,7 +40,7 @@ const HOME_WELCOME_STEPS = [
   },
   {
     icon: 'flash',
-    color: '#ED2939',
+    color: '#F4C430',
     title: 'Fast Ordering Flow',
     description: 'Tap Quick Order to choose products, checkout, and get your delivery in as fast as 15-30 minutes.',
   },
@@ -236,6 +236,11 @@ export default function HomeScreen({ navigation, route }) {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <View style={styles.backgroundCanvas} pointerEvents="none">
+        <View style={[styles.backgroundOrb, styles.backgroundOrbTop]} />
+        <View style={[styles.backgroundOrb, styles.backgroundOrbMid]} />
+        <View style={[styles.backgroundOrb, styles.backgroundOrbBottom]} />
+      </View>
       
       {/* Fixed Header - Modern Design */}
       <View style={styles.header}>
@@ -293,7 +298,7 @@ export default function HomeScreen({ navigation, route }) {
             activeOpacity={0.7}
           >
             <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
-              <Ionicons name="cart" size={20} color="#fff" />
+              <Ionicons name="cart" size={20} color="#F4C430" />
               {cartItems.length > 0 && (
                 <View style={styles.headerActionBadge}>
                   <Text style={styles.headerActionBadgeText}>
@@ -317,8 +322,8 @@ export default function HomeScreen({ navigation, route }) {
             onPress={() => navigation.navigate('OrderHistory')}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#ED2939' }]}>
-              <Ionicons name="time" size={20} color="#fff" />
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+              <Ionicons name="time" size={20} color="#F4C430" />
             </View>
             <Text
               style={styles.headerActionText}
@@ -335,8 +340,8 @@ export default function HomeScreen({ navigation, route }) {
             onPress={() => navigation.navigate('Favorites')}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#ED2939' }]}>    
-              <Ionicons name="heart" size={20} color="#fff" />
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>    
+              <Ionicons name="heart" size={20} color="#ED2939" />
             </View>
             <Text
               style={styles.headerActionText}
@@ -353,8 +358,8 @@ export default function HomeScreen({ navigation, route }) {
             onPress={() => navigation.navigate('Reservation', { openNotice: true })}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#10B981' }]}>
-              <Ionicons name="calendar" size={20} color="#fff" />
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+              <Ionicons name="calendar" size={20} color="#10B981" />
             </View>
             <Text
               style={styles.headerActionText}
@@ -371,8 +376,8 @@ export default function HomeScreen({ navigation, route }) {
             onPress={() => setShowReviewModal(true)}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#F59E0B' }]}>
-              <Ionicons name="star" size={20} color="#fff" />
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+              <Ionicons name="star" size={20} color="#F59E0B" />
             </View>
             <Text
               style={styles.headerActionText}
@@ -416,7 +421,7 @@ export default function HomeScreen({ navigation, route }) {
                 </Text>
               </View>
               <View style={styles.orderNowArrow}>
-                <Ionicons name="arrow-forward-circle" size={32} color="#fff" />
+                <Ionicons name="arrow-forward-circle" size={32} color="#0033A0" />
               </View>
             </View>
           </TouchableOpacity>
@@ -437,7 +442,7 @@ export default function HomeScreen({ navigation, route }) {
           <View style={styles.statDivider} />
           
           <View style={styles.statItem}>
-            <View style={[styles.statIcon, { backgroundColor: '#ED2939' }]}>
+            <View style={[styles.statIcon, { backgroundColor: '#F4C430' }]}>
               <Ionicons name="shield-checkmark" size={20} color="#fff" />
             </View>
             <View style={styles.statInfo}>
@@ -691,6 +696,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
+  backgroundCanvas: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#EEF3FF',
+    overflow: 'hidden',
+  },
+  backgroundOrb: {
+    position: 'absolute',
+    borderRadius: 999,
+    opacity: 1,
+  },
+  backgroundOrbTop: {
+    top: -40,
+    left: -70,
+    width: 220,
+    height: 220,
+    backgroundColor: 'rgba(0, 51, 160, 0.12)',
+  },
+  backgroundOrbMid: {
+    top: 120,
+    right: -90,
+    width: 260,
+    height: 260,
+    backgroundColor: 'rgba(244, 196, 48, 0.16)',
+  },
+  backgroundOrbBottom: {
+    bottom: -120,
+    left: '20%',
+    width: 320,
+    height: 320,
+    backgroundColor: 'rgba(0, 51, 160, 0.08)',
+  },
   scrollView: {
     flex: 1,
     zIndex: 0,
@@ -727,15 +763,21 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   logoWrapperHeader: {
-    backgroundColor: '#0033A0',
-    borderRadius: 10,
-    padding: 4,
+    backgroundColor: '#fff',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    overflow: 'hidden',
     marginRight: 10,
+    borderWidth: 2,
+    borderColor: '#F4C430',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   brandLogoHeader: {
     width: 36,
     height: 36,
-    borderRadius: 6,
+    borderRadius: 18,
   },
   brandTitleHeader: {
     fontSize: 16,
@@ -811,14 +853,14 @@ const styles = StyleSheet.create({
   },
   logoWrapper: {
     backgroundColor: '#0033A0',
-    borderRadius: 12,
+    borderRadius: 22.5,
     padding: 5,
     marginRight: 12,
   },
   brandLogo: {
     width: 45,
     height: 45,
-    borderRadius: 8,
+    borderRadius: 22.5,
   },
   brandTextContainer: {
     flex: 1,
@@ -848,12 +890,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#10B98110',
+    backgroundColor: '#F4C43014',
     borderRadius: 12,
     padding: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#10B98120',
+    borderColor: '#F4C43030',
   },
   promoContent: {
     flex: 1,
@@ -861,7 +903,7 @@ const styles = StyleSheet.create({
   promoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#10B981',
+    color: '#0033A0',
     marginBottom: 2,
   },
   promoSubtitle: {
@@ -872,7 +914,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#10B981',
+    backgroundColor: '#F4C430',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -921,7 +963,7 @@ const styles = StyleSheet.create({
     minWidth: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#ED2939',
+    backgroundColor: '#F4C430',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 4,
@@ -966,11 +1008,11 @@ const styles = StyleSheet.create({
   orderNowButton: {
     borderRadius: 20,
     marginBottom: 20,
-    elevation: 20,
-    shadowColor: '#0033A0',
+    elevation: 10,
+    shadowColor: '#0B2E6B',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
     overflow: 'hidden',
   },
   orderNowGradient: {
@@ -983,7 +1025,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#fff',
+    backgroundColor: '#FEF3C7',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -1004,7 +1046,7 @@ const styles = StyleSheet.create({
   },
   orderNowSubtitle: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.9)',
+    color: 'rgba(255,255,255,0.88)',
   },
   orderNowArrow: {
     marginLeft: 8,
@@ -1035,11 +1077,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#0033A0',
   },
   statLabel: {
     fontSize: 11,
-    color: '#666',
+    color: '#5B6B85',
   },
   statDivider: {
     width: 1,
@@ -1119,7 +1161,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#f0f4ff',
+    backgroundColor: '#FEF3C7',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -1207,7 +1249,7 @@ const styles = StyleSheet.create({
   footerLogo: {
     width: 40,
     height: 40,
-    borderRadius: 8,
+    borderRadius: 20,
   },
   footerTitle: {
     fontSize: 16,
