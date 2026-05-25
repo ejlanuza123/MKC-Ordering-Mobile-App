@@ -5,11 +5,11 @@
     "version": "2.0.0",
     "scheme": "mkcorderingapp",
     "orientation": "portrait",
-    "icon": "./assets/mkc-logo.png",
+    "icon": "./assets/mkc-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/mkc-logo.png",
+      "image": "./assets/mkc-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
