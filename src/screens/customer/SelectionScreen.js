@@ -23,6 +23,7 @@ import { useCart } from '../../context/CartContext';
 import SafeAreaWrapper from '../../components/SafeAreaWrapper';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import { useProducts } from '../../context/ProductContext';
+import { getShopHoursBadge } from '../../utils/shopHours';
 
 const { width } = Dimensions.get('window');
 
@@ -59,6 +60,7 @@ export default function SelectionScreen({ navigation, route }) {
 
   // favorites handled by context
   const { isFavorite, toggleFavorite, favorites } = useFavorites();
+  const shopHoursBadge = getShopHoursBadge();
   
   // Create a ref for the debounced function
   const debouncedSearchRef = useRef(null);
@@ -241,6 +243,12 @@ export default function SelectionScreen({ navigation, route }) {
                 <Text style={styles.headerSubtitle}>
                   Browse the full MKC foods catalog
                 </Text>
+                <View style={[styles.shopStatusBadge, { backgroundColor: shopHoursBadge.background }]}>
+                  <View style={[styles.shopStatusDot, { backgroundColor: shopHoursBadge.accent }]} />
+                  <Text style={[styles.shopStatusText, { color: shopHoursBadge.accent }]}>
+                    {shopHoursBadge.label} · Mon-Fri 9:00 AM to 5:00 PM
+                  </Text>
+                </View>
               </View>
               
               <View style={styles.headerActions}>
@@ -625,6 +633,25 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 14,
     color: '#666',
+  },
+  shopStatusBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shopStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  shopStatusText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   cartButton: {
     width: 40,

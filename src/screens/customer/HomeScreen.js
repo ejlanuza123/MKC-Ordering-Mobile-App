@@ -23,6 +23,7 @@ import Avatar from '../../components/Avatar';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getShopHoursBadge } from '../../utils/shopHours';
 
 const { width } = Dimensions.get('window');
 const HOME_WELCOME_VERSION = 'v1';
@@ -192,6 +193,7 @@ export default function HomeScreen({ navigation, route }) {
   }, [welcomeStepIndex, completeWelcomeFlow, welcomeStepTransition]);
 
   const currentWelcomeStep = HOME_WELCOME_STEPS[welcomeStepIndex] || HOME_WELCOME_STEPS[0];
+  const shopHoursBadge = getShopHoursBadge();
 
   useFocusEffect(
     useCallback(() => {
@@ -287,6 +289,12 @@ export default function HomeScreen({ navigation, route }) {
             <View style={styles.greetingEmoji}>
               <Text style={styles.greetingEmojiText}>👋</Text>
             </View>
+          </View>
+          <View style={[styles.shopStatusBadge, { backgroundColor: shopHoursBadge.background }]}>
+            <View style={[styles.shopStatusDot, { backgroundColor: shopHoursBadge.accent }]} />
+            <Text style={[styles.shopStatusText, { color: shopHoursBadge.accent }]}>
+              {shopHoursBadge.label} · Mon-Fri 9:00 AM to 5:00 PM
+            </Text>
           </View>
         </View>
 
@@ -489,8 +497,8 @@ export default function HomeScreen({ navigation, route }) {
               <View style={styles.featureIconContainer}>
                 <Ionicons name="headset" size={24} color="#10B981" />
               </View>
-              <Text style={styles.featureTitle}>24/7 Support</Text>
-              <Text style={styles.featureDescription}>Always here to help</Text>
+              <Text style={styles.featureTitle}>Store Hours</Text>
+              <Text style={styles.featureDescription}>Mon-Fri 9 AM to 5 PM</Text>
             </View>
 
             <View style={styles.featureCard}>
@@ -519,7 +527,7 @@ export default function HomeScreen({ navigation, route }) {
           </View>
           <Text style={styles.footerText}>
             Premium quality MKC food products delivered to your doorstep.
-            Available 24/7 for your convenience.
+            Open Mon-Fri, 9:00 AM to 5:00 PM.
           </Text>
           <View style={styles.footerContact}>
             <View style={styles.footerContactItem}>
@@ -815,6 +823,25 @@ const styles = StyleSheet.create({
   },
   greetingEmojiText: {
     fontSize: 16,
+  },
+  shopStatusBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shopStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  shopStatusText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   headerActions: {
     flexDirection: 'row',
