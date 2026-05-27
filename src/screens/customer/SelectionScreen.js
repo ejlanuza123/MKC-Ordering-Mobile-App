@@ -41,11 +41,10 @@ const debounce = (func, wait) => {
 
 export default function SelectionScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
-  const { products, loading, refreshProducts, hasRealtimeUpdates, getProductCategories } = useProducts();
+  const { products, loading, refreshProducts, hasRealtimeUpdates } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState('name_asc');
   const { cartItems, addToCart } = useCart();
@@ -57,9 +56,6 @@ export default function SelectionScreen({ navigation, route }) {
     title: '',
     message: ''
   });
-
-  const availableCategories = ['All', ...getProductCategories()];
-  const selectedCategory = route.params?.category || 'All';
 
   // favorites handled by context
   const { isFavorite, toggleFavorite, favorites } = useFavorites();
@@ -96,21 +92,15 @@ export default function SelectionScreen({ navigation, route }) {
 
 
   // Apply all filters and sorting
-  const applyFilters = useCallback((productsList, query, sortMethod, category) => {
+  const applyFilters = useCallback((productsList, query, sortMethod) => {
     let filtered = [...productsList];
-    
-    // Filter by category
-    if (category !== 'All') {
-      filtered = filtered.filter(product => product.category === category);
-    }
     
     // Filter by search query
     if (query.trim() !== '') {
       const lowerQuery = query.toLowerCase();
       filtered = filtered.filter(product => 
         product.name.toLowerCase().includes(lowerQuery) ||
-        (product.description && product.description.toLowerCase().includes(lowerQuery)) ||
-        product.category.toLowerCase().includes(lowerQuery)
+        (product.description && product.description.toLowerCase().includes(lowerQuery))
       );
     }
     
@@ -136,9 +126,35 @@ export default function SelectionScreen({ navigation, route }) {
   // Initialize debounced search function
   useEffect(() => {
     debouncedSearchRef.current = debounce((query) => {
-      applyFilters(products, query, sortBy, selectedCategory);
+      try {
+        applyFilters(Array.isArray(products) ? products : [], query, sortBy);
+      } catch (err) {
+        console.warn('applyFilters error (debounced):', err.message);
+      }
     }, 300);
-  }, [products, sortBy, selectedCategory, applyFilters]);
+  }, [products, sortBy, applyFilters]);
+
+  useEffect(() => {
+    try {
+      console.log('SelectionScreen init:', {
+        loading,
+        productsLength: Array.isArray(products) ? products.length : 0,
+        hasRealtimeUpdates,
+      });
+    } catch (e) {
+      console.warn('SelectionScreen init log failed', e.message);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    console.log('SelectionScreen state update:', {
+      loading,
+      productsLength: Array.isArray(products) ? products.length : 0,
+      filteredLength: Array.isArray(filteredProducts) ? filteredProducts.length : 0,
+      hasRealtimeUpdates,
+    });
+  }, [loading, products, filteredProducts, hasRealtimeUpdates]);
 
   // Handle search input change
   const handleSearchChange = (text) => {
@@ -151,13 +167,13 @@ export default function SelectionScreen({ navigation, route }) {
   // Handle sort selection
   const handleSortSelect = (sortMethod) => {
     setSortBy(sortMethod);
-    applyFilters(products, searchQuery, sortMethod, selectedCategory);
+    applyFilters(products, searchQuery, sortMethod);
     setSortModalVisible(false);
   };
 
   useEffect(() => {
     refreshProducts();
-  }, [selectedCategory]);
+  }, [refreshProducts]);
 
   // Auto-refresh after realtime updates arrive (auto-apply after short delay)
   useEffect(() => {
@@ -171,10 +187,14 @@ export default function SelectionScreen({ navigation, route }) {
   }, [hasRealtimeUpdates, refreshProducts]);
 
   useEffect(() => {
-    if (products.length > 0) {
-      applyFilters(products, searchQuery, sortBy, selectedCategory);
+    try {
+      const safeProducts = Array.isArray(products) ? products : [];
+      applyFilters(safeProducts, searchQuery, sortBy);
+    } catch (err) {
+      console.warn('applyFilters error (initial):', err.message);
+      setFilteredProducts([]);
     }
-  }, [products, sortBy, searchQuery, selectedCategory, applyFilters]);
+  }, [products, sortBy, searchQuery, applyFilters]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -183,13 +203,6 @@ export default function SelectionScreen({ navigation, route }) {
 
   const handleProductPress = (product) => {
     navigation.navigate('ProductDetails', { product });
-  };
-
-  const handleCategoryChange = (category) => {
-    setSearchQuery('');
-    navigation.setParams({ category });
-    applyFilters(products, '', sortBy, category);
-    setCategoryModalVisible(false);
   };
 
   // Get sort label text
@@ -223,7 +236,7 @@ export default function SelectionScreen({ navigation, route }) {
               
               <View style={styles.headerTitleContainer}>
                 <Text style={styles.headerTitle}>
-                  {selectedCategory === 'All' ? 'MKC Products' : selectedCategory}
+                  MKC Products
                 </Text>
                 <Text style={styles.headerSubtitle}>
                   Browse the full MKC foods catalog
@@ -249,21 +262,6 @@ export default function SelectionScreen({ navigation, route }) {
 
               </View>
             </View>
-
-          {/* Category Picker */}
-          <TouchableOpacity
-            style={styles.categoryPickerButton}
-            onPress={() => setCategoryModalVisible(true)}
-            activeOpacity={0.9}
-          >
-            <View style={styles.categoryPickerCopy}>
-              <Text style={styles.categoryPickerLabel}>Category</Text>
-              <Text style={styles.categoryPickerValue} numberOfLines={1}>
-                {selectedCategory === 'All' ? 'All Categories' : selectedCategory}
-              </Text>
-            </View>
-            <Ionicons name="chevron-down" size={18} color="#0033A0" />
-          </TouchableOpacity>
 
           {/* Search Bar */}
           <View style={styles.searchBar}>
@@ -385,7 +383,7 @@ export default function SelectionScreen({ navigation, route }) {
                     color="#ccc" 
                   />
                   <Text style={styles.emptyTitle}>
-                    {searchQuery ? 'No matching products found' : 'No products available in this category'}
+                    {searchQuery ? 'No matching products found' : 'No products available right now'}
                   </Text>
                   <Text style={styles.emptySubtitle}>
                     {searchQuery 
@@ -403,9 +401,9 @@ export default function SelectionScreen({ navigation, route }) {
                   )}
                   <TouchableOpacity 
                     style={styles.emptyButton}
-                    onPress={() => navigation.navigate('Selection')}
+                    onPress={() => refreshProducts()}
                   >
-                    <Text style={styles.emptyButtonText}>Browse Categories</Text>
+                    <Text style={styles.emptyButtonText}>Refresh Products</Text>
                   </TouchableOpacity>
                 </View>
               }
@@ -533,60 +531,6 @@ export default function SelectionScreen({ navigation, route }) {
           </TouchableOpacity>
         </Modal>
 
-        {/* Category Modal */}
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={categoryModalVisible}
-          onRequestClose={() => setCategoryModalVisible(false)}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setCategoryModalVisible(false)}
-          >
-            <View style={styles.categoryModalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Choose Category</Text>
-                <TouchableOpacity
-                  onPress={() => setCategoryModalVisible(false)}
-                  style={styles.modalCloseButton}
-                >
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView style={styles.categoryOptions}>
-                {availableCategories.map((category) => {
-                  const isSelected = selectedCategory === category;
-
-                  return (
-                    <TouchableOpacity
-                      key={category}
-                      style={[
-                        styles.categoryOption,
-                        isSelected && styles.categoryOptionSelected,
-                      ]}
-                      onPress={() => handleCategoryChange(category)}
-                    >
-                      <View style={styles.categoryOptionIconWrap}>
-                        <Ionicons
-                          name={category === 'All' ? 'apps' : 'pricetag'}
-                          size={20}
-                          color={isSelected ? '#0033A0' : '#666'}
-                        />
-                      </View>
-                      <Text style={[styles.categoryOptionText, isSelected && styles.categoryOptionTextSelected]}>
-                        {category}
-                      </Text>
-                      {isSelected ? <Ionicons name="checkmark" size={20} color="#0033A0" /> : null}
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          </TouchableOpacity>
-        </Modal>
       </View>
       <CustomAlertModal
         visible={showAlert}

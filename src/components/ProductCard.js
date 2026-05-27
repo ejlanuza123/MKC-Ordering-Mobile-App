@@ -10,22 +10,7 @@ export default function ProductCard({
   onToggleFavorite,
   showActionHint = true,
 }) {
-  const categoryMeta = {
-    'Whole Chicken': { color: '#0F766E', icon: 'restaurant' },
-    'Cut-Ups & Portions': { color: '#B91C1C', icon: 'layers' },
-    'Ready-to-Cook': { color: '#D97706', icon: 'flame' },
-    Giblets: { color: '#15803D', icon: 'leaf' },
-    'Class-B / Unbranded': { color: '#6B7280', icon: 'pricetag' }
-  };
-  const meta = categoryMeta[product.category] || { color: '#0033A0', icon: 'cube' };
-  
-  const getCategoryColor = () => {
-    return meta.color;
-  };
-
-  const getCategoryIcon = () => {
-    return meta.icon;
-  };
+  const placeholderColor = '#0033A0';
 
   const handleAddToCart = () => {
     if (onAddToCart) {
@@ -50,21 +35,14 @@ export default function ProductCard({
             resizeMode="cover"
           />
         ) : (
-          <View style={[styles.placeholderImage, { backgroundColor: getCategoryColor() + '20' }]}>
+          <View style={[styles.placeholderImage, { backgroundColor: `${placeholderColor}20` }]}>
             <Ionicons 
-              name={getCategoryIcon()} 
+              name="cube" 
               size={40} 
-              color={getCategoryColor()}
+              color={placeholderColor}
             />
           </View>
         )}
-        
-        {/* Category Badge */}
-        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor() }]}>
-          <Text style={styles.categoryBadgeText}>
-            {product.category || 'PRODUCT'}
-          </Text>
-        </View>
         
         {/* Stock Indicator */}
         {product.stock_quantity !== undefined && product.stock_quantity <= 10 && product.stock_quantity > 0 && (
@@ -127,7 +105,7 @@ export default function ProductCard({
           style={[
             styles.actionButton,
             { 
-              backgroundColor: product.stock_quantity > 0 ? getCategoryColor() : '#ccc',
+              backgroundColor: product.stock_quantity > 0 ? '#16A34A' : '#ccc',
               opacity: product.stock_quantity > 0 ? 1 : 0.6
             }
           ]}
@@ -194,21 +172,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  categoryBadge: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    elevation: 2,
-  },
-  categoryBadgeText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
   },
   stockIndicator: {
     position: 'absolute',

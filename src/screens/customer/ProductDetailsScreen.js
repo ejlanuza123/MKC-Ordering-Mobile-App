@@ -142,14 +142,6 @@ export default function ProductDetailsScreen({ route, navigation }) {
               <View style={styles.titleContainer}>
                 <Text style={styles.title} numberOfLines={2}>{product.name}</Text>
                 <View style={styles.categoryContainer}>
-                  <View style={[
-                    styles.categoryBadge,
-                    { backgroundColor: '#0033A0' }
-                  ]}>
-                    <Text style={styles.categoryText}>
-                      {product.category}
-                    </Text>
-                  </View>
                   {product.stock_quantity > 0 && (
                     <View style={styles.stockBadge}>
                       <Ionicons name="checkmark-circle" size={16} color="#10B981" />
@@ -325,18 +317,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-  },
-  categoryBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginRight: 10,
-    marginBottom: 4,
-  },
-  categoryText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: 'bold',
   },
   stockBadge: {
     flexDirection: 'row',
