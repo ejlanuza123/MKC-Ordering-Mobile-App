@@ -18,6 +18,8 @@ import { reservationService } from '../../services/reservationService';
 const SLOT_INTERVAL_MINUTES = 10;
 const START_HOUR = 6;
 const END_HOUR = 22;
+const WORK_START_HOUR = 9;
+const WORK_END_HOUR = 17;
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function toDateKey(date) {
@@ -58,6 +60,55 @@ function buildTimeSlots() {
 }
 
 const TIME_SLOTS = buildTimeSlots();
+
+function isWeekday(date) {
+  const day = date.getDay();
+  return day >= 1 && day <= 5;
+}
+
+function isShopOpenNow(date = new Date()) {
+  const day = date.getDay();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const currentMinutes = hour * 60 + minute;
+  const openMinutes = WORK_START_HOUR * 60;
+  const closeMinutes = WORK_END_HOUR * 60;
+
+  return day >= 1 && day <= 5 && currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+}
+
+function isSelectableReservationDate(dateKey, referenceDate = new Date()) {
+  const day = fromDateKey(dateKey);
+  const today = new Date(referenceDate);
+  today.setHours(0, 0, 0, 0);
+  day.setHours(0, 0, 0, 0);
+
+  if (day < today) return false;
+  if (!isWeekday(day)) return false;
+  if (toDateKey(day) === toDateKey(referenceDate) && !isShopOpenNow(referenceDate)) return false;
+
+  return true;
+}
+
+function isWorkingTimeSlot(slot) {
+  const [hour] = slot.split(':').map(Number);
+  return hour >= WORK_START_HOUR && hour < WORK_END_HOUR;
+}
+
+function getNextSelectableDateKey(startDate = new Date()) {
+  const candidate = new Date(startDate);
+  candidate.setHours(0, 0, 0, 0);
+
+  for (let index = 0; index < 45; index += 1) {
+    if (isSelectableReservationDate(toDateKey(candidate), startDate)) {
+      return toDateKey(candidate);
+    }
+
+    candidate.setDate(candidate.getDate() + 1);
+  }
+
+  return toDateKey(candidate);
+}
 
 export default function ReservationScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
@@ -233,7 +284,7 @@ export default function ReservationScreen({ navigation, route }) {
 
   const startNewReservation = () => {
     setEditingReservation(null);
-    setSelectedDateKey(toDateKey(new Date()));
+    setSelectedDateKey(getNextSelectableDateKey(new Date()));
     setSelectedTime('');
     selectedTimeRef.current = '';
     setNotes('');
@@ -535,7 +586,7 @@ export default function ReservationScreen({ navigation, route }) {
 
                 const dayKey = toDateKey(date);
                 const isSelected = dayKey === selectedDateKey;
-                const disabled = isPastDate(dayKey);
+                const disabled = !isSelectableReservationDate(dayKey);
                 const hasReservations = daysWithReservations.has(dayKey);
 
                 return (
@@ -612,7 +663,7 @@ export default function ReservationScreen({ navigation, route }) {
 
                     const dayKey = toDateKey(date);
                     const isSelected = dayKey === selectedDateKey;
-                    const disabled = isPastDate(dayKey);
+                    const disabled = !isSelectableReservationDate(dayKey);
                     const hasReservations = daysWithReservations.has(dayKey);
 
                     return (
@@ -651,7 +702,7 @@ export default function ReservationScreen({ navigation, route }) {
                       const isCurrentEditingSlot =
                         editingSlotDateKey === selectedDateKey && editingSlotTimeKey === slot;
                       const past = isPastDateTime(selectedDateKey, slot);
-                      const disabled = (booked && !isCurrentEditingSlot) || past;
+                      const disabled = (booked && !isCurrentEditingSlot) || !isWorkingTimeSlot(slot) || past;
                       const selected = selectedTime === slot;
 
                       return (
