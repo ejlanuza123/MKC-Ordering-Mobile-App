@@ -30,7 +30,6 @@ export default function OpenStreetMapPicker({
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [address, setAddress] = useState(initialAddress || '');
   const [searchQuery, setSearchQuery] = useState('');
-  const [mapHtml, setMapHtml] = useState('');
 
   // MKC Foods coordinates
   const SAN_PEDRO_COORDS = {
@@ -52,7 +51,6 @@ export default function OpenStreetMapPicker({
     const road = addressData.road || addressData.street;
     if (road) parts.push(road);
 
-    // 3. Fix the Barangay Boundary Issue using distance calculation
     // 3. Fix the Barangay Boundary Issue using distance calculation
     // Calculate rough distance from the pin to the MKC reference point
     const distanceToReference = Math.sqrt(
@@ -94,8 +92,8 @@ export default function OpenStreetMapPicker({
     pendingLocationRef.current = payload;
   };
 
-  useEffect(() => {
-    const html = `
+  const mapHtml = React.useMemo(() => {
+    return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -168,9 +166,7 @@ export default function OpenStreetMapPicker({
           let map;
           let marker;
           let geocodeTimeout;
-          
-          const defaultLat = ${SAN_PEDRO_COORDS.lat};
-          const defaultLng = ${SAN_PEDRO_COORDS.lng};
+          let mapInitialized = false;
           
           function initMap(lat, lon) {
             map = L.map('map').setView([lat, lon], 17);
@@ -230,19 +226,32 @@ export default function OpenStreetMapPicker({
               }, 600);
             });
 
-            // FIX: Listen for location updates from React Native and TRIGGER geocoding
-            window.addEventListener('message', function(event) {
-              const data = JSON.parse(event.data);
-              if (data.type === 'SET_LOCATION') {
-                map.setView([data.lat, data.lon], 18);
-                marker.setLatLng([data.lat, data.lon]);
-                
-                // We MUST call this so the app gets the text address of the GPS location
-                clearTimeout(geocodeTimeout);
-                getAddressFromCoords(data.lat, data.lon); 
-              }
-            });
+            // Notify RN that the map is ready
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'MAP_READY'
+            }));
           }
+
+          // Listen for location from React Native (active immediately when page loads)
+          window.addEventListener('message', function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'SET_LOCATION') {
+              if (!mapInitialized) {
+                // Initialize map at the GPS location on first SET_LOCATION
+                initMap(data.lat, data.lon);
+                mapInitialized = true;
+                return;
+              }
+              map.setView([data.lat, data.lon], 18);
+              marker.setLatLng([data.lat, data.lon]);
+              
+              // Reverse geocode the GPS location for the address text
+              clearTimeout(geocodeTimeout);
+              getAddressFromCoords(data.lat, data.lon); 
+            }
+          });
+
+          // WAIT: Map will NOT initialize until GPS location arrives
           
           window.searchLocation = function() {
             const query = document.getElementById('searchInput').value;
@@ -282,9 +291,8 @@ export default function OpenStreetMapPicker({
               });
           };
           
-          window.onload = function() {
-            initMap(defaultLat, defaultLng);
-          };
+          // Map initialization waits for SET_LOCATION from React Native
+          // No onload init - map starts at user's GPS location
         </script>
       </body>
       </html>
@@ -320,6 +328,8 @@ export default function OpenStreetMapPicker({
     } catch (error) {
       console.error('Error getting location:', error);
       Alert.alert('Error', 'Could not get your current location. Using default location.');
+      // Send the default coordinates to the WebView so the map initializes
+      sendLocationToWebView(SAN_PEDRO_COORDS.lat, SAN_PEDRO_COORDS.lng);
       setSelectedLocation(SAN_PEDRO_COORDS);
     } finally {
       setLoading(false);
