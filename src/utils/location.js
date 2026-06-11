@@ -57,13 +57,32 @@ export const reverseGeocode = async (latitude, longitude) => {
 // Format address from geocoding result
 export const formatAddress = (address) => {
   const parts = [];
-  
-  if (address.street) parts.push(address.street);
-  if (address.district) parts.push(address.district);
-  if (address.city) parts.push(address.city);
-  if (address.region) parts.push(address.region);
-  if (address.postalCode) parts.push(address.postalCode);
-  
+
+  const pushUnique = (value) => {
+    if (!value) return;
+    const s = String(value).trim();
+    if (!s) return;
+    if (parts.includes(s)) return;
+    parts.push(s);
+  };
+
+  // NOTE: expo Location.reverseGeocodeAsync uses provider-specific fields.
+  // These commonly include barangay/locality-like information under different keys.
+  // We add multiple fallbacks so barangay shows up more reliably.
+
+  pushUnique(address.street);
+
+  // Barangay / district / neighbourhood-ish fields
+  pushUnique(address.district);
+  pushUnique(address.subdistrict);
+  pushUnique(address.neighborhood);
+  pushUnique(address.suburb);
+  pushUnique(address.locality);
+
+  pushUnique(address.city);
+  pushUnique(address.region);
+  pushUnique(address.postalCode);
+
   return parts.join(', ');
 };
 
