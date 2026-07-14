@@ -1115,13 +1115,18 @@ export default function RiderDeliveryDetailsScreen({ route, navigation }) {
                       setUploadingProof(true);
                       try {
                         // upload and save then update status
-                        const { success, photoUrl, error } = await uploadProofPhoto(proofImageUri, deliveryData.id);
-                        if (!success) throw new Error(error || 'Could not upload photo');
+                        console.log('=== PROOF UPLOAD FLOW ===');
+                        console.log('1. Uploading photo for deliveryId:', deliveryData.id);
+                        const { success, photoUrl, error: uploadErr } = await uploadProofPhoto(proofImageUri, deliveryData.id);
+                        console.log('2. Upload result:', { success, photoUrl, uploadErr });
+                        if (!success) throw new Error(uploadErr || 'Could not upload photo');
 
-                        const { success: saved, error: saveError } = await saveDeliveryProof({
+                        console.log('3. Saving delivery proof to DB...');
+                        const { success: saved, error: saveError, data: saveData } = await saveDeliveryProof({
                           delivery_id: deliveryData.id,
                           photo_url: photoUrl
                         });
+                        console.log('4. Save result:', { saved, saveError, saveData });
 
                         if (!saved) throw new Error(saveError || 'Could not save proof data');
 
