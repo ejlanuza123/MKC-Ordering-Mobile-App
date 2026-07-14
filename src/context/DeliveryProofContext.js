@@ -83,6 +83,15 @@ export const DeliveryProofProvider = ({ children }) => {
         console.warn('Order lookup error (for proof insert):', orderError);
       }
 
+      console.log('📝 About to INSERT into delivery_proofs:', {
+        delivery_id: proofData.delivery_id,
+        photo_url: proofData.photo_url,
+        signature_data: proofData.signature_data,
+        recipient_name: proofData.recipient_name,
+        notes: proofData.notes,
+        delivered_at: new Date().toISOString()
+      });
+
       const { data, error } = await supabase
         .from('delivery_proofs')
         .insert([{
@@ -95,6 +104,8 @@ export const DeliveryProofProvider = ({ children }) => {
         }])
         .select()
         .single();
+
+      console.log('📝 INSERT result:', { data, error });
 
       if (error) throw error;
 
