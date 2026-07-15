@@ -20,7 +20,7 @@ export const DeliveryProofProvider = ({ children }) => {
       // Get file extension
       const uriParts = uri.split('.');
       const extension = uriParts[uriParts.length - 1].toLowerCase();
-      
+
       // Generate unique filename
       const filename = `delivery_proofs/${deliveryId}_${Date.now()}.${extension}`;
 
@@ -83,15 +83,6 @@ export const DeliveryProofProvider = ({ children }) => {
         console.warn('Order lookup error (for proof insert):', orderError);
       }
 
-      console.log('📝 About to INSERT into delivery_proofs:', {
-        delivery_id: proofData.delivery_id,
-        photo_url: proofData.photo_url,
-        signature_data: proofData.signature_data,
-        recipient_name: proofData.recipient_name,
-        notes: proofData.notes,
-        delivered_at: new Date().toISOString()
-      });
-
       const { data, error } = await supabase
         .from('delivery_proofs')
         .insert([{
@@ -104,8 +95,6 @@ export const DeliveryProofProvider = ({ children }) => {
         }])
         .select()
         .single();
-
-      console.log('📝 INSERT result:', { data, error });
 
       if (error) throw error;
 
@@ -189,4 +178,3 @@ export const useDeliveryProof = () => {
   }
   return context;
 };
-
