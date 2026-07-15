@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingChatHead from '../components/FloatingChatHead';
+import { riderPresenceService } from '../services/riderPresenceService';
 
 // --- IMPORT SCREENS ---
 // Auth Screens
@@ -94,6 +95,24 @@ export default function AppNavigator() {
   const [introLoading, setIntroLoading] = useState(true);
   const [currentRouteName, setCurrentRouteName] = useState(null);
   const navigationRef = useNavigationContainerRef();
+
+  // Manage rider presence (online/offline status)
+  useEffect(() => {
+    if (loading) return;
+
+    if (user && role === 'rider') {
+      // Rider logged in - initialize presence tracking
+      riderPresenceService.initialize(user.id);
+    } else {
+      // User logged out or not a rider - cleanup presence tracking
+      riderPresenceService.cleanup(user?.id);
+    }
+
+    // Cleanup on unmount as well
+    return () => {
+      riderPresenceService.cleanup(user?.id);
+    };
+  }, [user, role, loading]);
 
   useEffect(() => {
     const loadIntroState = async () => {
