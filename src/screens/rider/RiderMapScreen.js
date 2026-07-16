@@ -110,9 +110,7 @@ export default function RiderMapScreen({ navigation }) {
 
     startTrackingSession();
 
-    return () => {
-      isActive = false;
-    };
+    
   }, [tracking, profile?.id]);
 
   const generateMapHtml = () => {
