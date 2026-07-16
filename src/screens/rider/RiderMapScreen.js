@@ -50,7 +50,7 @@ export default function RiderMapScreen({ navigation }) {
     title: '',
     message: ''
   });
-  const [tracking, setTracking] = useState(false);
+  const [tracking, setTracking] = useState(true);
 
   // MKC Foods reference coordinates (default)
   const SAN_PEDRO_COORDS = {
