@@ -29,7 +29,7 @@ describe('riderPresenceService', () => {
     jest.clearAllMocks();
   });
 
-  it('does not mark rider offline when AppState becomes inactive', async () => {
+  it('marks rider offline when AppState becomes background or inactive', async () => {
     let appStateCallback;
     mockAppStateAddEventListener.mockImplementation((_event, cb) => {
       appStateCallback = cb;
@@ -46,8 +46,8 @@ describe('riderPresenceService', () => {
     riderPresenceService.subscribeToAppState('r-1');
 
     await appStateCallback('inactive');
-    expect(setOnlineSpy).not.toHaveBeenCalled();
-    expect(checkOnlineSpy).not.toHaveBeenCalled();
+    expect(checkOnlineSpy).toHaveBeenCalledWith('r-1');
+    expect(setOnlineSpy).toHaveBeenCalledWith('r-1', false);
 
     await appStateCallback('background');
     expect(checkOnlineSpy).toHaveBeenCalledWith('r-1');
@@ -57,7 +57,7 @@ describe('riderPresenceService', () => {
     expect(setOnlineSpy).toHaveBeenCalledWith('r-1', true);
   });
 
-  it('ignores NetInfo events with unknown connectivity', async () => {
+  it('marks rider offline when network is disconnected', async () => {
     let netInfoCallback;
     const unsubscribe = jest.fn();
     mockNetInfoAddEventListener.mockImplementation((cb) => {
@@ -71,10 +71,9 @@ describe('riderPresenceService', () => {
     riderPresenceService.subscribeToNetworkState('r-2');
 
     await netInfoCallback({ isConnected: null });
-    expect(setOnlineSpy).not.toHaveBeenCalled();
+    expect(setOnlineSpy).toHaveBeenCalledWith('r-2', false);
 
     await netInfoCallback({ isConnected: true, isInternetReachable: false });
     expect(setOnlineSpy).toHaveBeenCalledWith('r-2', false);
   });
 });
-

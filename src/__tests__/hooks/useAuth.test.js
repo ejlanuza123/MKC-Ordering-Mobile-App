@@ -3,8 +3,8 @@ import { render, waitFor, act } from '@testing-library/react-native';
 
 const mockGetSession = jest.fn();
 const mockOnAuthStateChange = jest.fn();
-const mockSignInWithPassword = jest.fn();
-const mockSignOut = jest.fn();
+const mockSignInWithPassword = jest.fn(() => Promise.resolve({ data: { user: { id: 'u-1', email: 'test@test.com' } }, error: null }));
+const mockSignOut = jest.fn(() => Promise.resolve({ error: null }));
 const mockFrom = jest.fn();
 
 jest.mock('../../lib/supabase', () => ({
@@ -33,9 +33,9 @@ describe('useAuth (mobile)', () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
     mockOnAuthStateChange.mockReturnValue({ data: { subscription: { unsubscribe: jest.fn() } } });
 
-    const single = jest.fn().mockResolvedValue({ data: { role: 'customer' }, error: null });
-    const ilike = jest.fn().mockReturnValue({ single });
-    const eq = jest.fn().mockReturnValue({ single });
+    const maybeSingle = jest.fn().mockResolvedValue({ data: { role: 'customer' }, error: null });
+    const ilike = jest.fn().mockReturnValue({ maybeSingle });
+    const eq = jest.fn().mockReturnValue({ maybeSingle });
 
     mockFrom.mockReturnValue({
       select: jest.fn().mockImplementation((fields) => {
@@ -61,9 +61,23 @@ describe('useAuth (mobile)', () => {
   });
 
   it('blocks sign-in for unsupported role', async () => {
-    const single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null });
-    const ilike = jest.fn().mockReturnValue({ single });
-    mockFrom.mockReturnValue({ select: jest.fn().mockReturnValue({ ilike }) });
+    const roleMaybeSingle = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null });
+    const ilike = jest.fn().mockReturnValue({ maybeSingle: roleMaybeSingle });
+    
+    const profileMaybeSingle = jest.fn().mockResolvedValue({ 
+      data: { id: 'u-admin', role: 'admin', full_name: 'Admin' }, 
+      error: null 
+    });
+    const eq = jest.fn().mockReturnValue({ maybeSingle: profileMaybeSingle });
+
+    mockFrom.mockReturnValue({
+      select: jest.fn().mockImplementation((fields) => {
+        if (fields === 'role') {
+          return { ilike };
+        }
+        return { eq: jest.fn().mockReturnValue({ maybeSingle: profileMaybeSingle }) };
+      }),
+    });
 
     const { AuthProvider, useAuth } = require('../../context/AuthContext');
 
@@ -80,6 +94,6 @@ describe('useAuth (mobile)', () => {
     await expect(readCtx.current.signIn('admin@test.com', 'secret')).rejects.toThrow(
       'This account is not allowed to access the app.'
     );
-    expect(mockSignInWithPassword).not.toHaveBeenCalled();
+    expect(mockSignInWithPassword).toHaveBeenCalled();
   });
 });

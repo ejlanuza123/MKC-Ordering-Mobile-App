@@ -15,8 +15,8 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 const mockGetSession = jest.fn();
 const mockOnAuthStateChange = jest.fn();
-const mockSignOut = jest.fn();
-const mockSignInWithPassword = jest.fn();
+const mockSignOut = jest.fn(() => Promise.resolve({ error: null }));
+const mockSignInWithPassword = jest.fn(() => Promise.resolve({ data: null, error: null }));
 const mockFrom = jest.fn();
 let capturedAppStateHandler;
 let capturedAuthStateHandler;
@@ -68,11 +68,11 @@ describe('AuthContext provider', () => {
       };
     });
 
-    const single = jest.fn().mockResolvedValue({
+    const maybeSingle = jest.fn().mockResolvedValue({
       data: { id: 'u-1', role: 'customer', full_name: 'Customer One' },
       error: null,
     });
-    const eq = jest.fn().mockReturnValue({ single });
+    const eq = jest.fn().mockReturnValue({ maybeSingle });
 
     mockFrom.mockReturnValue({
       select: jest.fn().mockReturnValue({ eq }),
@@ -120,17 +120,22 @@ describe('AuthContext provider', () => {
     expect(readCtx.current.role).toBe(null);
   });
 
-  it('rejects signIn for unsupported role before auth sign-in call', async () => {
+  it('rejects signIn for unsupported role after auth sign-in call', async () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
 
-    const single = jest.fn().mockResolvedValue({
-      data: { role: 'admin' },
+    mockSignInWithPassword.mockResolvedValue({
+      data: { user: { id: 'u-admin', email: 'admin@test.com' } },
       error: null,
     });
-    const ilike = jest.fn().mockReturnValue({ single });
+
+    const profileMaybeSingle = jest.fn().mockResolvedValue({
+      data: { id: 'u-admin', role: 'admin', full_name: 'Admin' },
+      error: null,
+    });
+    const eq = jest.fn().mockReturnValue({ maybeSingle: profileMaybeSingle });
 
     mockFrom.mockReturnValue({
-      select: jest.fn().mockReturnValue({ ilike }),
+      select: jest.fn().mockReturnValue({ eq }),
     });
 
     const { AuthProvider, useAuth } = require('../../context/AuthContext');
@@ -148,7 +153,7 @@ describe('AuthContext provider', () => {
     await expect(readCtx.current.signIn('admin@test.com', 'secret')).rejects.toThrow(
       'This account is not allowed to access the app.'
     );
-    expect(mockSignInWithPassword).not.toHaveBeenCalled();
+    expect(mockSignInWithPassword).toHaveBeenCalled();
   });
 
   it('signs out after long background inactivity when app resumes', async () => {
@@ -235,7 +240,7 @@ describe('AuthContext provider', () => {
     mockFrom.mockImplementation(() => ({
       select: jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+          maybeSingle: jest.fn().mockResolvedValue({
             data: { id: 'u-admin', role: 'admin' },
             error: null,
           }),
@@ -308,7 +313,7 @@ describe('AuthContext provider', () => {
         if (columns === 'role') {
           return {
             ilike: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
+              maybeSingle: jest.fn().mockResolvedValue({
                 data: { role: 'rider' },
                 error: null,
               }),
@@ -318,7 +323,7 @@ describe('AuthContext provider', () => {
 
         return {
           eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+            maybeSingle: jest.fn().mockResolvedValue({
               data: { id: 'u-2', role: 'rider', full_name: 'Rider One' },
               error: null,
             }),
@@ -391,7 +396,7 @@ describe('AuthContext provider', () => {
     mockFrom.mockImplementation(() => ({
       select: jest.fn().mockReturnValue({
         ilike: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({ data: { role: 'customer' }, error: null }),
+          maybeSingle: jest.fn().mockResolvedValue({ data: { role: 'customer' }, error: null }),
         }),
       }),
     }));
