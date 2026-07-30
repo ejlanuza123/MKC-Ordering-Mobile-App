@@ -112,7 +112,7 @@ export default function AppNavigator() {
     return () => {
       riderPresenceService.cleanup(user?.id);
     };
-  }, [user, role, loading]);
+  }, [user?.id, role, loading]);
 
   useEffect(() => {
     const loadIntroState = async () => {

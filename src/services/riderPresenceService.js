@@ -3,12 +3,19 @@ import NetInfo from '@react-native-community/netinfo';
 import { supabase } from '../lib/supabase';
 
 const HEARTBEAT_INTERVAL_MS = 30000; // 30 seconds
+const DISCONNECT_DEBOUNCE_MS = 6000; // ignore blips shorter than this
+const BACKGROUND_DEBOUNCE_MS = 4000; // ignore brief 'inactive' flickers (dialogs, control center, etc.)
 
 let heartbeatInterval = null;
 let appStateSubscription = null;
 let netInfoSubscription = null;
 let currentRiderId = null;
 let wasOnlineBeforeBackground = false;
+let disconnectTimer = null;
+let backgroundTimer = null;
+// Tracks whether the rider *wants* to be online, independent of transient
+// network/app-state blips. Only explicit init/cleanup/manual toggle changes this.
+let intendedOnline = false;
 
 export const riderPresenceService = {
   /**
@@ -16,12 +23,13 @@ export const riderPresenceService = {
    * Call this when the rider logs in / app starts
    */
   async initialize(riderId) {
-    if (!riderId) {
-      console.warn('[Presence] No riderId provided, skipping initialization');
+    if (currentRiderId === riderId) {
+      // Already tracking this rider - don't clobber their manual online/offline choice.
       return;
     }
 
     currentRiderId = riderId;
+    intendedOnline = true;
 
     // Start heartbeat
     this.startHeartbeat(riderId);
@@ -43,6 +51,9 @@ export const riderPresenceService = {
   async cleanup(riderId) {
     const targetRiderId = riderId || currentRiderId;
 
+    intendedOnline = false;
+    this._clearDisconnectTimer();
+    this._clearBackgroundTimer();
     this.stopHeartbeat();
     this.unsubscribeFromAppState();
     this.unsubscribeFromNetworkState();
@@ -52,6 +63,20 @@ export const riderPresenceService = {
     }
 
     currentRiderId = null;
+  },
+
+  _clearDisconnectTimer() {
+    if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+    }
+  },
+
+  _clearBackgroundTimer() {
+    if (backgroundTimer) {
+      clearTimeout(backgroundTimer);
+      backgroundTimer = null;
+    }
   },
 
   /**
@@ -135,16 +160,26 @@ export const riderPresenceService = {
       console.log(`[Presence] AppState changed to: ${nextAppState}`);
 
       if (nextAppState === 'active') {
-        // App came to foreground
+        // App came back to the foreground - cancel any pending "mark offline" timer
+        this._clearBackgroundTimer();
+
         const netState = await NetInfo.fetch();
-        if (netState.isConnected && wasOnlineBeforeBackground) {
+        if (netState.isConnected && intendedOnline) {
           await this.setOnlineStatus(riderId, true);
         }
-      } else if (nextAppState === 'background' || nextAppState === 'inactive') {
-        // App went to background - mark as offline
-        wasOnlineBeforeBackground = await this.checkIfOnline(riderId);
-        await this.setOnlineStatus(riderId, false);
+      } else if (nextAppState === 'background') {
+        // Only 'background' means the app was actually backgrounded.
+        // 'inactive' also fires for brief system UI (permission prompts,
+        // control center, the app-switcher preview) and should NOT flip status.
+        wasOnlineBeforeBackground = intendedOnline;
+
+        this._clearBackgroundTimer();
+        backgroundTimer = setTimeout(async () => {
+          backgroundTimer = null;
+          await this.setOnlineStatus(riderId, false);
+        }, BACKGROUND_DEBOUNCE_MS);
       }
+      // 'inactive' is intentionally ignored - see comment above.
     });
 
     console.log('[Presence] AppState subscription started');
@@ -167,14 +202,32 @@ export const riderPresenceService = {
     this.unsubscribeFromNetworkState(); // Clear any existing
 
     netInfoSubscription = NetInfo.addEventListener(async (state) => {
-      console.log(`[Presence] Network state changed: isConnected=${state.isConnected}`);
+      // isInternetReachable can be `null` while it's still being determined -
+      // treat that as "unknown", not "disconnected".
+      const reachable = state.isConnected && state.isInternetReachable !== false;
+      console.log(`[Presence] Network state changed: isConnected=${state.isConnected}, isInternetReachable=${state.isInternetReachable}`);
 
-      if (!state.isConnected) {
-        // Network lost - mark offline
-        await this.setOnlineStatus(riderId, false);
+      if (!reachable) {
+        // Don't immediately mark offline - a heavy screen (e.g. the map's
+        // WebView loading tiles/routes) can cause a momentary false reading.
+        // Wait to see if it's still disconnected after the debounce window.
+        if (!disconnectTimer) {
+          disconnectTimer = setTimeout(async () => {
+            disconnectTimer = null;
+            const current = await NetInfo.fetch();
+            const stillDown = !current.isConnected || current.isInternetReachable === false;
+            if (stillDown && intendedOnline) {
+              await this.setOnlineStatus(riderId, false);
+            }
+          }, DISCONNECT_DEBOUNCE_MS);
+        }
       } else {
-        // Network restored - mark online
-        await this.setOnlineStatus(riderId, true);
+        // Network confirmed up - cancel any pending offline write and
+        // restore online status if the rider intends to be online.
+        this._clearDisconnectTimer();
+        if (intendedOnline) {
+          await this.setOnlineStatus(riderId, true);
+        }
       }
     });
 
@@ -189,6 +242,21 @@ export const riderPresenceService = {
       netInfoSubscription();
       netInfoSubscription = null;
     }
+  },
+
+  /**
+   * Get whether the rider currently intends to be online (manual toggle state).
+   */
+  isIntendedOnline() {
+    return intendedOnline;
+  },
+
+  /**
+   * Explicitly set intended online state (call this from the manual toggle
+   * in settings) so automatic blip-correction doesn't fight the user's choice.
+   */
+  setIntendedOnline(value) {
+    intendedOnline = value;
   },
 
   /**
