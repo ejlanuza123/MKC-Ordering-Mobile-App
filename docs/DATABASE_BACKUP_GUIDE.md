@@ -66,19 +66,19 @@ If `pg_dump` is already added to your Windows `PATH`, you can run it without the
 ```powershell
 # Use a timestamp to avoid overwriting previous backups (format: yyyyMMdd-HHmmss)
 $ts = Get-Date -Format yyyyMMdd-HHmmss
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup-$ts.dump"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup-$ts.dump"
 
 # Or, if you prefer a predictable filename (no timestamp):
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup.dump"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup.dump"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup-%t.dump"
+for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup-%t.dump"
 
 :: Or, without timestamp:
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup.dump"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup.dump"
 ```
 
 If you have not refreshed your terminal after installing PostgreSQL, open a new PowerShell or cmd window first. If Windows still cannot find `pg_dump`, use the full path version below.
@@ -92,18 +92,18 @@ If you have not refreshed your terminal after installing PostgreSQL, open a new 
   -Fc `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
+  -f "C:\Projects\mkc-backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
 
 # Or, without timestamp:
 & "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" `
   -h aws-1-ap-northeast-1.pooler.supabase.com `
   -p 5432 `
   -U postgres.lledahkvurqaoiptcfvq `
-  -d postgres `
+  pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only-$ts.sql"
   -Fc `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\backup.dump"
+  -f "C:\Projects\mkc-backup.dump"
 ```
 
 When prompted, enter the Supabase database password.
@@ -112,13 +112,13 @@ When prompted, enter the Supabase database password.
 
 ```powershell
 # If you used $ts in the same session:
-Get-Item "C:\Projects\backup-$ts.dump"
+Get-Item "C:\Projects\mkc-backup-$ts.dump"
 
 # Or list recent backups:
-Get-ChildItem "C:\Projects\backup-*.dump" | Sort-Object LastWriteTime -Descending
+Get-ChildItem "C:\Projects\mkc-backup-*.dump" | Sort-Object LastWriteTime -Descending
 
 # Or, if you used a predictable filename:
-Get-Item "C:\Projects\backup.dump"
+Get-Item "C:\Projects\mkc-backup.dump"
 ```
 
 ## 2. Full backup as a plain `.sql` file
@@ -130,19 +130,19 @@ If `pg_dump.exe` is already available in your `PATH`, you can use the shorter co
 ```powershell
 # Use a timestamp to avoid overwriting previous backups (format: yyyyMMdd-HHmmss)
 $ts = Get-Date -Format yyyyMMdd-HHmmss
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup-$ts.sql"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup-$ts.sql"
 
 # Or, without timestamp:
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup.sql"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup-%t.sql"
+for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup-%t.sql"
 
 :: Or without timestamp:
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup.sql"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 If PowerShell or cmd still cannot find `pg_dump`, use the full path version below.
@@ -156,7 +156,7 @@ If PowerShell or cmd still cannot find `pg_dump`, use the full path version belo
   -Fp `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
+  -f "C:\Projects\mkc-full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
 
 # Or without timestamp:
 & "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" `
@@ -167,7 +167,7 @@ If PowerShell or cmd still cannot find `pg_dump`, use the full path version belo
   -Fp `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\full-backup.sql"
+  -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 ## 3. Schema-only backup (no data)
@@ -182,16 +182,16 @@ $ts = Get-Date -Format yyyyMMdd-HHmmss
 pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only-$ts.sql"
 
 # Or without timestamp:
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only.sql"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only-%t.sql"
+for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only-%t.sql"
 
 :: Or without timestamp:
-pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only.sql"
+pg_dump -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only.sql"
 ```
 
 Full path (PowerShell):
@@ -205,7 +205,7 @@ Full path (PowerShell):
   --schema-only `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\schema-only-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
+  -f "C:\Projects\mkc-schema-only-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
 
 # Or without timestamp:
 & "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" `
@@ -216,7 +216,7 @@ Full path (PowerShell):
   --schema-only `
   --no-owner `
   --no-acl `
-  -f "C:\Projects\schema-only.sql"
+  -f "C:\Projects\mkc-schema-only.sql"
 ```
 
 ## 4. Restore a `.dump` file
@@ -228,13 +228,13 @@ Use the password for your local PostgreSQL `postgres` user here. This is separat
 If `pg_restore` is already available in your `PATH`, you can use the shorter command:
 
 ```powershell
-pg_restore -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\backup.dump"
+pg_restore -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\mkc-backup.dump"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-pg_restore -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\backup.dump"
+pg_restore -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\mkc-backup.dump"
 ```
 
 ```powershell
@@ -245,13 +245,13 @@ pg_restore -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\
   -d postgres `
   --clean `
   --if-exists `
-  "C:\Projects\backup.dump"
+  "C:\Projects\mkc-backup.dump"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-"C:\Program Files\PostgreSQL\17\bin\pg_restore.exe" -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\backup.dump"
+"C:\Program Files\PostgreSQL\17\bin\pg_restore.exe" -h localhost -p 5432 -U postgres -d postgres --clean --if-exists "C:\Projects\mkc-backup.dump"
 ```
 
 ### Restore `.dump` directly to Supabase
@@ -259,13 +259,13 @@ Command Prompt (cmd):
 Use this only if you want to apply the dump to the live Supabase database.
 
 ```powershell
-pg_restore -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --no-owner --no-privileges "C:\Projects\backup.dump"
+pg_restore -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --no-owner --no-privileges "C:\Projects\mkc-backup.dump"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-pg_restore -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --no-owner --no-privileges "C:\Projects\backup.dump"
+pg_restore -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --no-owner --no-privileges "C:\Projects\mkc-backup.dump"
 ```
 
 ## 5. Restore a `.sql` file
@@ -277,25 +277,25 @@ Use the password for your local PostgreSQL `postgres` user here. This is separat
 If `psql` is already available in your `PATH`, you can use the shorter command:
 
 ```powershell
-psql "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\full-backup.sql"
+psql "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-psql "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\full-backup.sql"
+psql "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 ```powershell
 & "C:\Program Files\PostgreSQL\17\bin\psql.exe" `
   "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" `
-  -f "C:\Projects\full-backup.sql"
+  -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-"C:\Program Files\PostgreSQL\17\bin\psql.exe" "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\full-backup.sql"
+"C:\Program Files\PostgreSQL\17\bin\psql.exe" "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 ### Restore directly to Supabase
@@ -303,13 +303,13 @@ Command Prompt (cmd):
 Use this only if you want to apply the backup to the live Supabase database.
 
 ```powershell
-psql "host=aws-1-ap-northeast-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.lledahkvurqaoiptcfvq sslmode=require" -f "C:\Projects\full-backup.sql"
+psql "host=aws-1-ap-northeast-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.lledahkvurqaoiptcfvq sslmode=require" -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-psql "host=aws-1-ap-northeast-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.lledahkvurqaoiptcfvq sslmode=require" -f "C:\Projects\full-backup.sql"
+psql "host=aws-1-ap-northeast-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.lledahkvurqaoiptcfvq sslmode=require" -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 ## 6. How to confirm the restore worked
@@ -391,28 +391,28 @@ SELECT COUNT(*) FROM your_table_name;
 ### Backup to dump
 
 ```powershell
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
 
 # Or without timestamp:
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\backup.dump"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f "C:\Projects\mkc-backup.dump"
 ```
 
 ### Backup to SQL
 
 ```powershell
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
 
 # Or without timestamp:
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\full-backup.sql"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "C:\Projects\mkc-full-backup.sql"
 ```
 
 ### Backup schema only (no data)
 
 ```powershell
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
 
 # Or without timestamp:
-& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\schema-only.sql"
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres --schema-only --no-owner --no-acl -f "C:\Projects\mkc-schema-only.sql"
 ```
 
 ## 10. Using a different computer
@@ -434,13 +434,24 @@ The backup file path is local to the computer where you run `pg_dump`.
   -Fc `
   --no-owner `
   --no-acl `
-  -f ".\backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
+  -f ".\mkc-backup-$(Get-Date -Format yyyyMMdd-HHmmss).dump"
+
+# Or without timestamp:
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" `
+  -h aws-1-ap-northeast-1.pooler.supabase.com `
+  -p 5432 `
+  -U postgres.lledahkvurqaoiptcfvq `
+  -d postgres `
+  -Fc `
+  --no-owner `
+  --no-acl `
+  -f ".\mkc-backup.dump"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f ".\backup-%t.dump"
+for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fc --no-owner --no-acl -f ".\mkc-backup-%t.dump"
 ```
 
 ### Example using the Desktop
@@ -454,13 +465,13 @@ for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyM
   -Fp `
   --no-owner `
   --no-acl `
-  -f "$env:USERPROFILE\Desktop\full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
+  -f "$env:USERPROFILE\Desktop\mkc-full-backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "%USERPROFILE%\Desktop\full-backup-%t.sql"
+for /f "usebackq" %t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"`) do "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -h aws-1-ap-northeast-1.pooler.supabase.com -p 5432 -U postgres.lledahkvurqaoiptcfvq -d postgres -Fp --no-owner --no-acl -f "%USERPROFILE%\Desktop\mkc-full-backup-%t.sql"
 ```
 
 ### Restore on another computer
@@ -470,11 +481,11 @@ Use the file path on the machine where the backup file now exists.
 ```powershell
 & "C:\Program Files\PostgreSQL\17\bin\psql.exe" `
   "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" `
-  -f "$env:USERPROFILE\Desktop\full-backup.sql"
+  -f "$env:USERPROFILE\Desktop\mkc-full-backup.sql"
 ```
 
 Command Prompt (cmd):
 
 ```cmd
-"C:\Program Files\PostgreSQL\17\bin\psql.exe" "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "%USERPROFILE%\Desktop\full-backup.sql"
+"C:\Program Files\PostgreSQL\17\bin\psql.exe" "host=localhost port=5432 dbname=postgres user=postgres sslmode=disable" -f "%USERPROFILE%\Desktop\mkc-full-backup.sql"
 ```
