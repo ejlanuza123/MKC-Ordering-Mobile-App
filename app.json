@@ -2,7 +2,7 @@
   "expo": {
     "name": "MKC Ordering App",
     "slug": "MKCOrderingApp",
-    "version": "2.0.0",
+    "version": "2.2.0",
     "scheme": "mkcorderingapp",
     "orientation": "portrait",
     "icon": "./assets/mkc-icon.png",
