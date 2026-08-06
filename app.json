@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "MKC Ordering App",
-    "slug": "MKCOrderingApp",
-    "version": "2.2.0",
+    "name": "MKC Foods",
+    "slug": "mkc-mobile-app",
+    "version": "2.3.0",
     "scheme": "mkcorderingapp",
     "orientation": "portrait",
     "icon": "./assets/mkc-icon.png",
