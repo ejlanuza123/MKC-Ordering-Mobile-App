@@ -18,6 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import { formatCurrency, formatOrderNumber } from '../../utils/formatters';
 import { useFocusEffect } from '@react-navigation/native';
 import { riderPresenceService } from '../../services/riderPresenceService';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 export default function RiderDeliveriesScreen({ navigation, route }) {
   const { profile } = useAuth();
@@ -274,8 +275,7 @@ export default function RiderDeliveriesScreen({ navigation, route }) {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0033A0" />
-          <Text style={styles.loadingText}>Loading deliveries...</Text>
+          <SkeletonLoader variant="delivery-card" count={4} />
         </View>
       ) : (
         <FlatList

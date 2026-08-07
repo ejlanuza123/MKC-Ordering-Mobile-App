@@ -24,6 +24,7 @@ import { useNotifications } from '../../context/NotificationContext';
 import { useRiderRatings } from '../../context/RiderRatingContext';
 import { formatCurrency, formatOrderNumber } from '../../utils/formatters';
 import CustomAlertModal from '../../components/CustomAlertModal';
+import SkeletonLoader from '../../components/SkeletonLoader';
 import { useFocusEffect } from '@react-navigation/native';
 import Avatar from '../../components/Avatar';
 import { riderPresenceService } from '../../services/riderPresenceService';
@@ -474,8 +475,7 @@ export default function RiderDashboardScreen({ navigation }) {
   if (loading) {
     return (
       <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color="#0033A0" />
-        <Text style={styles.loadingText}>Loading dashboard...</Text>
+        <SkeletonLoader variant="dashboard-stats" />
       </View>
     );
   }

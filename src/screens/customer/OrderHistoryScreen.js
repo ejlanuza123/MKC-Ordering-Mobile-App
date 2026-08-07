@@ -24,6 +24,7 @@ import { chatService } from '../../services/chatService';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomAlertModal from '../../components/CustomAlertModal';
+import SkeletonLoader from '../../components/SkeletonLoader';
 import RiderInfoCard from '../../components/RiderInfoCard';
 import ReceiptModal from '../../components/ReceiptModal';
 import OrderDeliveryTimeline from '../../components/OrderDeliveryTimeline';
@@ -1070,8 +1071,7 @@ export default function OrderHistoryScreen({ navigation, route }) {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0033A0" />
-          <Text style={styles.loadingText}>Loading orders...</Text>
+          <SkeletonLoader variant="order-card" count={4} />
         </View>
       </View>
     );

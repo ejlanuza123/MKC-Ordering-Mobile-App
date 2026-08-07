@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import ProductCard from '../../components/ProductCard';
+import SkeletonLoader from '../../components/SkeletonLoader';
 import { useCart } from '../../context/CartContext';
 import SafeAreaWrapper from '../../components/SafeAreaWrapper';
 import CustomAlertModal from '../../components/CustomAlertModal';
@@ -305,8 +306,7 @@ export default function SelectionScreen({ navigation, route }) {
         {/* Products Section */}
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0033A0" />
-            <Text style={styles.loadingText}>Loading products...</Text>
+            <SkeletonLoader variant="product-card" count={6} />
           </View>
         ) : (
           <View style={styles.productsContainer}>
