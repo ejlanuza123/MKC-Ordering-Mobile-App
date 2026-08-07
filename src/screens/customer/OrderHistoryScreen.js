@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import RiderInfoCard from '../../components/RiderInfoCard';
 import ReceiptModal from '../../components/ReceiptModal';
+import OrderDeliveryTimeline from '../../components/OrderDeliveryTimeline';
 import { CUSTOMER_CANCELLATION_REASONS, CANCEL_REASON_OTHER } from '../../constants/cancellationReasons';
 
 const { width } = Dimensions.get('window');
@@ -1015,6 +1016,9 @@ export default function OrderHistoryScreen({ navigation, route }) {
                 )}
               </>
             )}
+
+            {/* 5-Step Order Delivery Progress Timeline */}
+            <OrderDeliveryTimeline status={selectedOrder.status} />
 
             {/* Order Timeline */}
             <View style={[styles.detailsSection, styles.lastSection]}>
