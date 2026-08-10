@@ -2,7 +2,7 @@
   "expo": {
     "name": "MKC Foods Corporation",
     "slug": "mkc-mobile-app",
-    "version": "2.10.1",
+    "version": "2.10.2",
     "scheme": "mkcorderingapp",
     "orientation": "portrait",
     "icon": "./assets/mkc-icon.png",
