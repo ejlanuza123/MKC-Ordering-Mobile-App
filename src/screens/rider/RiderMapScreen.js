@@ -56,10 +56,10 @@ export default function RiderMapScreen({ navigation }) {
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(null);
   const [onlineStatus, setOnlineStatus] = useState(true);
 
-  // MKC Foods Corporation Puerto Branch coordinates (default)
+  // Petron San Pedro Station coordinates (default)
   const SAN_PEDRO_COORDS = {
-    lat: 9.7395463,
-    lng: 118.7386649
+    lat: 9.7534772,
+    lng: 118.7478688
   };
 
   // Generate map HTML with all delivery markers
