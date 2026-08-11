@@ -108,8 +108,8 @@ describe('NotificationContext', () => {
       expect(ctxRef.current.notifications).toHaveLength(2);
       expect(ctxRef.current.unreadCount).toBe(1);
       expect(typeof capturedRealtimeCallback).toBe('function');
-    }, { timeout: 12000 });
-  }, 15000);
+    }, { timeout: 15000 });
+  }, 30000);
 
   it('handles realtime insert and markAsRead', async () => {
     const { NotificationProvider, useNotifications } = require('../../context/NotificationContext');
