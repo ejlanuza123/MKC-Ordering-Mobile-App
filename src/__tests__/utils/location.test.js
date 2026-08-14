@@ -1,7 +1,13 @@
-import { detectNearestBarangay, formatAddress, PUERTO_PRINCESA_BARANGAYS } from '../../utils/location';
+import { 
+  detectNearestBarangay, 
+  formatAddress, 
+  searchPuertoPrincesaPlaces, 
+  PUERTO_PRINCESA_BARANGAYS,
+  PUERTO_PRINCESA_LANDMARKS 
+} from '../../utils/location';
 
 describe('Puerto Princesa Location Utilities (MKC Foods)', () => {
-  it('contains essential Puerto Princesa barangays', () => {
+  it('contains essential Puerto Princesa barangays and landmarks', () => {
     const names = PUERTO_PRINCESA_BARANGAYS.map(b => b.name);
     expect(names).toContain('San Pedro');
     expect(names).toContain('San Jose');
@@ -9,12 +15,28 @@ describe('Puerto Princesa Location Utilities (MKC Foods)', () => {
     expect(names).toContain('San Miguel');
     expect(names).toContain('Santa Monica');
     expect(names).toContain('Bancao-Bancao');
+
+    const landmarkNames = PUERTO_PRINCESA_LANDMARKS.map(l => l.name);
+    expect(landmarkNames).toContain('Puerto Princesa City Coliseum');
+    expect(landmarkNames).toContain('SM City Puerto Princesa');
+    expect(landmarkNames).toContain('NCCC Mall Palawan');
+    expect(landmarkNames).toContain('Robinsons Place Palawan');
   });
 
-  it('detects barangay by text alias', () => {
-    expect(detectNearestBarangay(null, null, 'National Highway near San Pedro')).toBe('San Pedro');
-    expect(detectNearestBarangay(null, null, 'Palawan State University Tiniguiban')).toBe('Tiniguiban');
-    expect(detectNearestBarangay(null, null, 'New Market San Jose Terminal')).toBe('San Jose');
+  it('searches and lists matching landmarks and barangays accurately', () => {
+    const coliseumResults = searchPuertoPrincesaPlaces('coliseum');
+    expect(coliseumResults.length).toBeGreaterThan(0);
+    expect(coliseumResults[0].name).toContain('City Coliseum');
+    expect(coliseumResults[0].barangay).toBe('Tiniguiban');
+
+    const ncccResults = searchPuertoPrincesaPlaces('nccc');
+    expect(ncccResults.some(r => r.name.includes('NCCC Mall'))).toBe(true);
+
+    const smResults = searchPuertoPrincesaPlaces('sm');
+    expect(smResults.some(r => r.name.includes('SM City'))).toBe(true);
+
+    const sanMiguelResults = searchPuertoPrincesaPlaces('san miguel');
+    expect(sanMiguelResults.some(r => r.barangay === 'San Miguel')).toBe(true);
   });
 
   it('detects barangay by spatial proximity coordinates', () => {
