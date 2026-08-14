@@ -20,6 +20,9 @@ export const AuthProvider = ({ children }) => {
   const RECOVERY_CANCELLED_KEY = 'auth_recovery_cancelled_password_reset';
 
   const withTimeout = (operation, timeoutMs, timeoutMessage) => {
+    if (!operation || typeof operation.then !== 'function') {
+      return Promise.resolve(operation);
+    }
     let timeoutId;
 
     const timeoutPromise = new Promise((_, reject) => {
@@ -41,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   const clearPersistedAuthStorage = async () => {
     try {
       const keys = await AsyncStorage.getAllKeys();
-      const authKeys = keys.filter((key) =>
+      const authKeys = (keys || []).filter((key) =>
         key.includes('supabase') || key.includes('sb-') || key.includes('auth_recovery_')
       );
 
@@ -54,9 +57,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOutLocalFirst = async () => {
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
-    if (error) {
-      await supabase.auth.signOut();
+    try {
+      const res = await supabase.auth.signOut({ scope: 'local' });
+      if (res?.error) {
+        await supabase.auth.signOut();
+      }
+    } catch (_) {
+      try {
+        await supabase.auth.signOut();
+      } catch (__) {}
     }
     await clearPersistedAuthStorage();
   };
@@ -208,7 +217,24 @@ export const AuthProvider = ({ children }) => {
       AsyncStorage.removeItem(RECOVERY_CANCELLED_KEY),
     ]);
 
-    const { data, error } = await withTimeout(
+    // Pre-check role if profile is queryable before sign in
+    try {
+      const preProfileRes = await supabase
+        .from('profiles')
+        .select('role')
+        .ilike('email', normalizedEmail)
+        .single();
+
+      if (preProfileRes?.data && !ALLOWED_ROLES.includes(preProfileRes.data.role)) {
+        throw new Error('This account is not allowed to access the app.');
+      }
+    } catch (preErr) {
+      if (preErr.message === 'This account is not allowed to access the app.') {
+        throw preErr;
+      }
+    }
+
+    const signInRes = await withTimeout(
       supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
@@ -216,9 +242,10 @@ export const AuthProvider = ({ children }) => {
       AUTH_BOOTSTRAP_TIMEOUT_MS,
       'Login timed out. Please try again.'
     );
+    const { data, error } = signInRes || {};
     if (error) throw error;
     
-    if (data.user) {
+    if (data?.user) {
       try {
         await withTimeout(
           fetchUserProfile(data.user),
