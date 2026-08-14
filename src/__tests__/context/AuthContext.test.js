@@ -44,6 +44,7 @@ const AuthProbe = ({ useAuth }) => {
 describe('AuthContext provider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    require('@react-native-async-storage/async-storage').default.getItem.mockResolvedValue(null);
     capturedAppStateHandler = undefined;
     capturedAuthStateHandler = undefined;
     appStateRemove = jest.fn();
