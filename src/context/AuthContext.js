@@ -9,6 +9,7 @@ const AuthContext = createContext();
 const LOCAL_CACHED_AUTH_KEY = '@app_cached_auth_v1';
 const ALLOWED_ROLES = ['customer', 'rider'];
 const AUTH_BOOTSTRAP_TIMEOUT_MS = 10000;
+const BACKGROUND_INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 mins
 const RECOVERY_PENDING_KEY = 'auth_recovery_pending_password_reset';
 const RECOVERY_CANCELLED_KEY = 'auth_recovery_cancelled_password_reset';
 
@@ -107,14 +108,18 @@ export const AuthProvider = ({ children }) => {
     let isMounted = true;
 
     const initializeAuth = async () => {
-      // Step A: Hydrate from fast local cache immediately
-      await hydrateFromCache();
+      try {
+        // Step A: Hydrate from fast local cache immediately
+        await hydrateFromCache();
 
-      // Step B: Verify / refresh session with backend
-      await checkUser();
-
-      if (isMounted) {
-        setLoading(false);
+        // Step B: Verify / refresh session with backend
+        await checkUser();
+      } catch (_) {
+        // Handled within checkUser
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -141,7 +146,7 @@ export const AuthProvider = ({ children }) => {
         } finally {
           if (isMounted) setLoading(false);
         }
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === 'SIGNED_OUT' || !session) {
         await clearAuthState();
         if (isMounted) setLoading(false);
       }
@@ -163,7 +168,14 @@ export const AuthProvider = ({ children }) => {
       }
 
       if ((prevState === 'inactive' || prevState === 'background') && nextState === 'active') {
+        const backgroundedAt = backgroundedAtRef.current;
         backgroundedAtRef.current = null;
+
+        if (backgroundedAt && Date.now() - backgroundedAt > BACKGROUND_INACTIVITY_TIMEOUT_MS) {
+          await signOut();
+          return;
+        }
+
         checkUser({ silent: true });
       }
 
