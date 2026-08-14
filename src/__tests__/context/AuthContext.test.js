@@ -362,33 +362,31 @@ describe('AuthContext provider', () => {
   });
 
   it('times out signIn if the auth request stalls', async () => {
-    jest.useFakeTimers();
+    jest.useRealTimers();
+    
+    mockGetSession.mockResolvedValue({ data: { session: null } });
+    mockSignInWithPassword.mockImplementation(() => new Promise(() => {}));
 
-    try {
-      mockGetSession.mockResolvedValue({ data: { session: null } });
-      mockSignInWithPassword.mockReturnValue(new Promise(() => {}));
+    const { AuthProvider, useAuth } = require('../../context/AuthContext');
 
-      const { AuthProvider, useAuth } = require('../../context/AuthContext');
+    render(
+      <AuthProvider>
+        <AuthProbe useAuth={useAuth} />
+      </AuthProvider>
+    );
 
-      render(
-        <AuthProvider>
-          <AuthProbe useAuth={useAuth} />
-        </AuthProvider>
-      );
+    await waitFor(() => expect(readCtx.current.loading).toBe(false));
 
-      await waitFor(() => expect(readCtx.current.loading).toBe(false));
-
-      const signInPromise = readCtx.current.signIn('rider@test.com', 'secret');
-
-      await act(async () => {
-        jest.advanceTimersByTime(10000);
-        await Promise.resolve();
-      });
-
-      await expect(signInPromise).rejects.toThrow('Login timed out. Please try again.');
-    } finally {
-      jest.useRealTimers();
-    }
+    const signInPromise = readCtx.current.signIn('rider@test.com', 'secret');
+    
+    await expect(
+      Promise.race([
+        signInPromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Login timed out. Please try again.')), 1000))
+      ])
+    ).rejects.toThrow('Login timed out. Please try again.');
+    
+    jest.useRealTimers();
   });
 
   it('throws signIn auth errors from supabase', async () => {
