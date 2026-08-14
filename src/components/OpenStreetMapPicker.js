@@ -13,6 +13,7 @@ import {
   Platform,
   ScrollView,
   Animated,
+  FlatList,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,8 +22,7 @@ import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context'
 import { 
   requestLocationPermission, 
   detectNearestBarangay, 
-  reverseGeocode, 
-  formatAddress 
+  PUERTO_PRINCESA_BARANGAYS 
 } from '../utils/location';
 
 export default function OpenStreetMapPicker({
@@ -48,10 +48,14 @@ export default function OpenStreetMapPicker({
   const [gpsAccuracy, setGpsAccuracy] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
 
+  // Barangay Selector Modal state
+  const [showBarangayModal, setShowBarangayModal] = useState(false);
+  const [barangaySearch, setBarangaySearch] = useState('');
+
   // Pin animation
   const pinElevateAnim = useRef(new Animated.Value(0)).current;
 
-  // Default Puerto Princesa City Hub coordinates (MKC Foods Central Kitchen)
+  // Default Puerto Princesa City Hub coordinates (MKC Central Kitchen)
   const PUERTO_PRINCESA_DEFAULT = {
     lat: 9.7534772,
     lng: 118.7478688
@@ -106,30 +110,6 @@ export default function OpenStreetMapPicker({
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           html, body, #map { height: 100vh; width: 100vw; background: #f8fafc; overflow: hidden; }
-          .center-crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -100%);
-            z-index: 1000;
-            pointer-events: none;
-          }
-          .pin-icon {
-            width: 38px;
-            height: 38px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-          }
-          .pin-shadow {
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 6px;
-            background: rgba(0,0,0,0.25);
-            border-radius: 50%;
-            filter: blur(1px);
-          }
         </style>
       </head>
       <body>
@@ -153,7 +133,7 @@ export default function OpenStreetMapPicker({
               subdomains: 'abcd'
             }).addTo(map);
 
-            // Add Puerto Princesa Kitchen Hub Marker
+            // Add Puerto Princesa Hub Marker
             const hubIcon = L.divIcon({
               html: '<div style="background:#0033A0;color:white;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:bold;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);white-space:nowrap">🍽️ MKC Central Kitchen</div>',
               className: '',
@@ -313,15 +293,18 @@ export default function OpenStreetMapPicker({
           longitude: data.lng
         });
 
+        // 1. Spatial centroid nearest-neighbor detection
         const a = data.addressDetails;
         const streetHint = a ? (a.road || a.street || a.pedestrian || a.residential || a.building || a.amenity || '') : '';
-        const rawBrgyHint = a ? (a.suburb || a.village || a.neighbourhood || a.city_district || streetHint) : '';
+        const rawBrgyHint = a ? (a.suburb || a.village || a.neighbourhood || a.city_district || '') : '';
         const brgy = detectNearestBarangay(data.lat, data.lng, rawBrgyHint);
         setDetectedBarangay(brgy);
 
-        const detectedStreet = streetHint || (a?.house_number ? `#${a.house_number}` : 'Rizal Avenue / National Highway');
+        // 2. Extract street name
+        const detectedStreet = streetHint || (a?.house_number ? `#${a.house_number}` : 'Main Road');
         setStreetAddress(detectedStreet);
 
+        // 3. Assemble full formatted address
         assembleAddress(detectedStreet, brgy, purokLandmark);
       } else if (data.type === 'MAP_READY') {
         setLoading(false);
@@ -347,6 +330,14 @@ export default function OpenStreetMapPicker({
     setLoading(false);
   };
 
+  const handleSelectBarangay = (barangayItem) => {
+    setDetectedBarangay(barangayItem.name);
+    assembleAddress(streetAddress, barangayItem.name, purokLandmark);
+    setShowBarangayModal(false);
+
+    sendLocationToWebView(barangayItem.lat, barangayItem.lng);
+  };
+
   const handleConfirm = () => {
     if (!selectedLocation) {
       Alert.alert('Please drop a pin', 'Please wait for the map to finish locating your delivery address.');
@@ -366,6 +357,10 @@ export default function OpenStreetMapPicker({
 
     onClose();
   };
+
+  const filteredBarangays = PUERTO_PRINCESA_BARANGAYS.filter(b => 
+    b.name.toLowerCase().includes(barangaySearch.toLowerCase())
+  );
 
   return (
     <Modal
@@ -473,19 +468,25 @@ export default function OpenStreetMapPicker({
             contentContainerStyle={[styles.bottomSheetContent, { paddingBottom: insets.bottom + 12 }]}
             keyboardShouldPersistTaps="handled"
           >
-            {/* Live Location Status Pill */}
+            {/* Live Location Status & Interactive Barangay Switcher */}
             <View style={styles.sheetTopRow}>
-              <View style={styles.barangayPill}>
+              <TouchableOpacity
+                style={styles.barangayPillTouchable}
+                onPress={() => setShowBarangayModal(true)}
+                activeOpacity={0.7}
+              >
                 <Ionicons name="shield-checkmark" size={14} color="#0033A0" />
                 <Text style={styles.barangayPillText}>Brgy. {detectedBarangay}</Text>
-              </View>
+                <Ionicons name="chevron-down" size={13} color="#0033A0" style={{ marginLeft: 2 }} />
+              </TouchableOpacity>
+
               {isGeocoding ? (
                 <View style={styles.geocodingStatus}>
                   <ActivityIndicator size="small" color="#ED2939" />
-                  <Text style={styles.geocodingText}>Pinning address...</Text>
+                  <Text style={styles.geocodingText}>Pinning...</Text>
                 </View>
               ) : (
-                <Text style={styles.precisionLabel}>Verified Puerto Princesa</Text>
+                <Text style={styles.precisionLabel}>Tap to change Brgy</Text>
               )}
             </View>
 
@@ -545,6 +546,63 @@ export default function OpenStreetMapPicker({
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
+
+        {/* Searchable Barangay Selector Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showBarangayModal}
+          onRequestClose={() => setShowBarangayModal(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.barangayModalContent}>
+              <View style={styles.barangayModalHeader}>
+                <Text style={styles.barangayModalTitle}>Select Barangay</Text>
+                <TouchableOpacity
+                  onPress={() => setShowBarangayModal(false)}
+                  style={styles.barangayModalClose}
+                >
+                  <Ionicons name="close" size={20} color="#334155" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.barangaySearchWrapper}>
+                <Ionicons name="search" size={16} color="#64748b" style={{ marginRight: 6 }} />
+                <TextInput
+                  style={styles.barangaySearchInput}
+                  placeholder="Search Puerto Princesa barangay..."
+                  placeholderTextColor="#94a3b8"
+                  value={barangaySearch}
+                  onChangeText={setBarangaySearch}
+                />
+              </View>
+
+              <FlatList
+                data={filteredBarangays}
+                keyExtractor={(item) => item.name}
+                renderItem={({ item }) => {
+                  const isSelected = item.name === detectedBarangay;
+                  return (
+                    <TouchableOpacity
+                      style={[styles.barangayListItem, isSelected && styles.barangayListItemActive]}
+                      onPress={() => handleSelectBarangay(item)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.barangayListText, isSelected && styles.barangayListTextActive]}>
+                        Brgy. {item.name}
+                      </Text>
+                      {isSelected && (
+                        <Ionicons name="checkmark-circle" size={18} color="#0033A0" />
+                      )}
+                    </TouchableOpacity>
+                  );
+                }}
+                ItemSeparatorComponent={() => <View style={styles.barangaySeparator} />}
+                style={styles.barangayFlatList}
+              />
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </Modal>
   );
@@ -748,16 +806,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  barangayPill: {
+  barangayPillTouchable: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 5,
     backgroundColor: '#eff6ff',
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
+    borderWidth: 1.5,
+    borderColor: '#93c5fd',
   },
   barangayPillText: {
     fontSize: 12,
@@ -843,5 +901,83 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '700',
+  },
+
+  // Barangay Modal Styles
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  barangayModalContent: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '75%',
+    paddingBottom: 24,
+  },
+  barangayModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  barangayModalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  barangayModalClose: {
+    padding: 6,
+    borderRadius: 8,
+    backgroundColor: '#f8fafc',
+  },
+  barangaySearchWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 10,
+    paddingHorizontal: 12,
+    height: 38,
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  barangaySearchInput: {
+    flex: 1,
+    fontSize: 13,
+    color: '#0f172a',
+  },
+  barangayFlatList: {
+    paddingHorizontal: 16,
+  },
+  barangayListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  barangayListItemActive: {
+    backgroundColor: '#eff6ff',
+  },
+  barangayListText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  barangayListTextActive: {
+    color: '#0033A0',
+    fontWeight: '700',
+  },
+  barangaySeparator: {
+    height: 1,
+    backgroundColor: '#f8fafc',
   },
 });

@@ -20,7 +20,13 @@ describe('Puerto Princesa Location Utilities (MKC Foods)', () => {
   it('detects barangay by spatial proximity coordinates', () => {
     expect(detectNearestBarangay(9.7535, 118.7479)).toBe('San Pedro');
     expect(detectNearestBarangay(9.7460, 118.7520)).toBe('San Miguel');
+    expect(detectNearestBarangay(9.7450, 118.7410)).toBe('Maningning');
     expect(detectNearestBarangay(9.7890, 118.7360)).toBe('Santa Monica');
+  });
+
+  it('correctly identifies Barangay Maningning even when street is Rizal Ave', () => {
+    expect(detectNearestBarangay(9.7450, 118.7410, 'Rizal Avenue')).toBe('Maningning');
+    expect(detectNearestBarangay(9.7460, 118.7520, 'Rizal Avenue')).toBe('San Miguel');
   });
 
   it('formats clean Philippine address with verified Barangay', () => {
