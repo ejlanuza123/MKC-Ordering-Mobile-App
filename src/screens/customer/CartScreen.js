@@ -15,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCart } from '../../context/CartContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import { supabase } from '../../lib/supabase';
+import { isShopOpenNow, getShopHoursLabel } from '../../utils/shopHours';
 
 export default function CartScreen({ navigation }) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
@@ -26,6 +27,7 @@ export default function CartScreen({ navigation }) {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
   const [editValue, setEditValue] = useState('1');
+  const [closedAlertVisible, setClosedAlertVisible] = useState(false);
 
   const fetchDefaultDeliveryFee = useCallback(async () => {
     try {
@@ -186,9 +188,20 @@ export default function CartScreen({ navigation }) {
     );
   }
 
+  const isClosed = !isShopOpenNow();
+
   // Main cart screen with items
   return (
     <>
+      <CustomAlertModal
+        visible={closedAlertVisible}
+        onClose={() => setClosedAlertVisible(false)}
+        type="warning"
+        title="Store Currently Closed"
+        message="MKC Foods Corporation is currently closed. Ordering is available Monday to Friday, from 9:00 AM to 5:00 PM."
+        confirmText="Got it"
+        showCancelButton={false}
+      />
       <CustomAlertModal
         visible={removeModalVisible}
         onClose={() => setRemoveModalVisible(false)}
@@ -266,6 +279,21 @@ export default function CartScreen({ navigation }) {
           </View>
         </View>
 
+        {/* Store Closed Notification Banner */}
+        {isClosed && (
+          <View style={styles.storeClosedBanner}>
+            <View style={styles.storeClosedIconWrap}>
+              <Ionicons name="time" size={20} color="#DC2626" />
+            </View>
+            <View style={styles.storeClosedTextWrap}>
+              <Text style={styles.storeClosedTitle}>Store is Currently Closed</Text>
+              <Text style={styles.storeClosedSub}>
+                Ordering is available Mon–Fri, 9:00 AM to 5:00 PM. Checkout is temporarily locked.
+              </Text>
+            </View>
+          </View>
+        )}
+
         {/* List of Items */}
         <FlatList
           data={cartItems}
@@ -278,7 +306,7 @@ export default function CartScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         />
 
-        {/* Fixed Footer - REMOVED absolute positioning */}
+        {/* Fixed Footer */}
         <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
@@ -297,12 +325,20 @@ export default function CartScreen({ navigation }) {
           </View>
 
           <TouchableOpacity 
-            style={styles.checkoutButton}
-            onPress={() => navigation.navigate('Checkout')}
+            style={[styles.checkoutButton, isClosed && styles.checkoutButtonDisabled]}
+            onPress={() => {
+              if (isClosed) {
+                setClosedAlertVisible(true);
+                return;
+              }
+              navigation.navigate('Checkout');
+            }}
             activeOpacity={0.8}
           >
-            <Text style={styles.checkoutText}>PROCEED TO CHECKOUT</Text>
-            <Ionicons name="arrow-forward" size={20} color="#fff" />
+            <Text style={styles.checkoutText}>
+              {isClosed ? 'STORE CLOSED (OPENS MON-FRI 9 AM)' : 'PROCEED TO CHECKOUT'}
+            </Text>
+            <Ionicons name={isClosed ? "lock-closed" : "arrow-forward"} size={20} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
@@ -588,28 +624,68 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  storeClosedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+    borderWidth: 1,
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    padding: 12,
+  },
+  storeClosedIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FEE2E2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  storeClosedTextWrap: {
+    flex: 1,
+  },
+  storeClosedTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#991B1B',
+    marginBottom: 2,
+  },
+  storeClosedSub: {
+    fontSize: 12,
+    color: '#B91C1C',
+    lineHeight: 16,
+  },
   totalAmount: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ED2939',
+    color: '#0033A0',
   },
   checkoutButton: {
-    backgroundColor: '#ED2939',
+    backgroundColor: '#0033A0',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
     borderRadius: 12,
     elevation: 5,
-    shadowColor: '#ED2939',
+    shadowColor: '#0033A0',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
+  checkoutButtonDisabled: {
+    backgroundColor: '#94A3B8',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
   checkoutText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 15,
     marginRight: 8,
   },
 });

@@ -24,6 +24,7 @@ import MapPickerModal from '../../components/OpenStreetMapPicker';
 import { getAddressFromCurrentLocation } from '../../utils/location';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import SuccessModal from '../../components/SuccessModal';
+import { isShopOpenNow } from '../../utils/shopHours';
 
 export default function CheckoutScreen({ navigation }) {
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -197,6 +198,16 @@ export default function CheckoutScreen({ navigation }) {
   };
 
   const handlePlaceOrder = async () => {
+    if (!isShopOpenNow()) {
+      setAlertConfig({
+        type: 'warning',
+        title: 'Store Currently Closed',
+        message: 'Ordering is currently disabled because MKC Foods Corporation is closed. Operating hours are Monday to Friday, 9:00 AM to 5:00 PM.'
+      });
+      setShowAlert(true);
+      return;
+    }
+
     if (!address.trim()) {
       setAlertConfig({
         type: 'warning',
@@ -469,6 +480,21 @@ export default function CheckoutScreen({ navigation }) {
             bounces={false}
             keyboardShouldPersistTaps="handled"
           >
+            {/* Store Closed Banner */}
+            {!isShopOpenNow() && (
+              <View style={styles.storeClosedBanner}>
+                <View style={styles.storeClosedIconWrap}>
+                  <Ionicons name="time" size={20} color="#DC2626" />
+                </View>
+                <View style={styles.storeClosedTextWrap}>
+                  <Text style={styles.storeClosedTitle}>Store is Currently Closed</Text>
+                  <Text style={styles.storeClosedSub}>
+                    MKC Foods Corporation operates Mon–Fri, 9:00 AM to 5:00 PM. Orders cannot be submitted right now.
+                  </Text>
+                </View>
+              </View>
+            )}
+
             {/* Order Summary Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
@@ -713,20 +739,24 @@ export default function CheckoutScreen({ navigation }) {
             <TouchableOpacity 
               style={[
                 styles.placeOrderButton,
-                (loading || cartItems.length === 0 || addressLat == null || addressLng == null) && styles.placeOrderButtonDisabled
+                (loading || !isShopOpenNow() || cartItems.length === 0 || addressLat == null || addressLng == null) && styles.placeOrderButtonDisabled
               ]}
               onPress={handlePlaceOrder}
-              disabled={loading || cartItems.length === 0 || addressLat == null || addressLng == null}
+              disabled={loading || !isShopOpenNow() || cartItems.length === 0 || addressLat == null || addressLng == null}
               activeOpacity={0.8}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <>
-                  <Text style={styles.placeOrderText}>PLACE ORDER</Text>
-                  <View style={styles.orderTotalBadge}>
-                    <Text style={styles.orderTotalText}>₱{grandTotal.toFixed(2)}</Text>
-                  </View>
+                  <Text style={styles.placeOrderText}>
+                    {!isShopOpenNow() ? 'STORE CLOSED (OPENS MON-FRI 9 AM)' : 'PLACE ORDER'}
+                  </Text>
+                  {isShopOpenNow() && (
+                    <View style={styles.orderTotalBadge}>
+                      <Text style={styles.orderTotalText}>₱{grandTotal.toFixed(2)}</Text>
+                    </View>
+                  )}
                 </>
               )}
             </TouchableOpacity>
@@ -1098,6 +1128,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     marginBottom: 30,
+  },
+  storeClosedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+    borderWidth: 1,
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 12,
+  },
+  storeClosedIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FEE2E2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  storeClosedTextWrap: {
+    flex: 1,
+  },
+  storeClosedTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#991B1B',
+    marginBottom: 2,
+  },
+  storeClosedSub: {
+    fontSize: 12,
+    color: '#B91C1C',
+    lineHeight: 16,
   },
   placeOrderButtonDisabled: {
     backgroundColor: '#8da2c0',

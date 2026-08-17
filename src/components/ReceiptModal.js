@@ -56,7 +56,7 @@ export default function ReceiptModal({ visible, onClose, order, storeName = 'MKC
         <View style={styles.card}>
           <View style={styles.header}>
             <View style={styles.headerTitleRow}>
-              <Ionicons name="receipt-outline" size={22} color="#B41414" />
+              <Ionicons name="receipt-outline" size={22} color="#0033A0" />
               <Text style={styles.headerTitle}>Digital E-Receipt</Text>
             </View>
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
@@ -68,7 +68,7 @@ export default function ReceiptModal({ visible, onClose, order, storeName = 'MKC
             {/* Store Banner */}
             <View style={styles.storeBanner}>
               <Text style={styles.storeName}>{storeName}</Text>
-              <Text style={styles.storeSub}>San Pedro Commercial District, Laguna</Text>
+              <Text style={styles.storeSub}>178 Rizal Avenue, Barangay Maningning, Puerto Princesa City, 5300 Palawan</Text>
               <Text style={styles.storeSub}>Official Sales E-Receipt</Text>
             </View>
 
@@ -279,12 +279,12 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#B41414',
+    color: '#0033A0',
   },
   totalVal: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#B41414',
+    color: '#0033A0',
   },
   footerNote: {
     alignItems: 'center',
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   shareBtn: {
-    backgroundColor: '#B41414',
+    backgroundColor: '#0033A0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

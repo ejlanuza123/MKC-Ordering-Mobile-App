@@ -18,6 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useFavorites } from '../../context/FavoritesContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
+import { isShopOpenNow, getShopHoursBadge } from '../../utils/shopHours';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,6 +37,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
   });
   const { addToCart } = useCart();
   const insets = useSafeAreaInsets();
+  const shopStatus = getShopHoursBadge();
 
   const handleFavPress = async () => {
     if (!user) return;
@@ -79,11 +81,19 @@ export default function ProductDetailsScreen({ route, navigation }) {
 
     addToCart(product, finalQuantity, parseFloat(totalPrice));
     
-    setAlertConfig({
-      type: 'success',
-      title: 'Added to Cart',
-      message: `${product.name} has been added to your cart.`
-    });
+    if (!isShopOpenNow()) {
+      setAlertConfig({
+        type: 'success',
+        title: 'Added to Cart (Store Closed)',
+        message: `${product.name} has been added to your cart. Please note that checkout is only available during operating hours (Mon–Fri, 9:00 AM – 5:00 PM).`
+      });
+    } else {
+      setAlertConfig({
+        type: 'success',
+        title: 'Added to Cart',
+        message: `${product.name} has been added to your cart.`
+      });
+    }
     setShowAlert(true);
   };
 
@@ -148,6 +158,12 @@ export default function ProductDetailsScreen({ route, navigation }) {
                       <Text style={styles.stockText}>In Stock</Text>
                     </View>
                   )}
+                  <View style={[styles.stockBadge, { backgroundColor: shopStatus.background, marginLeft: 6 }]}>
+                    <Ionicons name="time" size={14} color={shopStatus.accent} />
+                    <Text style={[styles.stockText, { color: shopStatus.accent, marginLeft: 4 }]}>
+                      {shopStatus.label}
+                    </Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.priceContainer}>
