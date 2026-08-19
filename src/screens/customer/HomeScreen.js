@@ -24,6 +24,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getShopHoursBadge } from '../../utils/shopHours';
+import StorePauseBanner from '../../components/StorePauseBanner';
 
 const { width } = Dimensions.get('window');
 const HOME_WELCOME_VERSION = 'v1';
@@ -407,6 +408,9 @@ export default function HomeScreen({ navigation, route }) {
         showsVerticalScrollIndicator={false}
         bounces={true}
       >
+        {/* Store Holiday / Emergency Pause Live Banner */}
+        <StorePauseBanner />
+
         {/* Main Action Section - Enhanced Order Now Button */}
         <View style={styles.mainSection}>
           <View style={styles.sectionHeader}>
