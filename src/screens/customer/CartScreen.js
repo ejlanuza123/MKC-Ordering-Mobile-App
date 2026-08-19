@@ -12,8 +12,9 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCart } from '../../context/CartContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
+import StorePauseBanner from '../../components/StorePauseBanner';
+import { storeSettingsService } from '../../services/storeSettingsService';
 import { supabase } from '../../lib/supabase';
 import { isShopOpenNow, getShopHoursLabel } from '../../utils/shopHours';
 
@@ -22,6 +23,9 @@ export default function CartScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const total = getCartTotal();
   const [defaultDeliveryFee, setDefaultDeliveryFee] = useState(50);
+  const [pauseSettings, setPauseSettings] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'warning' });
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -54,6 +58,7 @@ export default function CartScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       fetchDefaultDeliveryFee();
+      storeSettingsService.getStorePauseSettings().then(setPauseSettings);
     }, [fetchDefaultDeliveryFee])
   );
 
@@ -194,6 +199,14 @@ export default function CartScreen({ navigation }) {
   return (
     <>
       <CustomAlertModal
+        visible={showAlert}
+        onClose={() => setShowAlert(false)}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        confirmText="OK"
+      />
+      <CustomAlertModal
         visible={closedAlertVisible}
         onClose={() => setClosedAlertVisible(false)}
         type="warning"
@@ -299,6 +312,7 @@ export default function CartScreen({ navigation }) {
           data={cartItems}
           keyExtractor={(item, index) => item.id.toString() + index}
           renderItem={renderItem}
+          ListHeaderComponent={<StorePauseBanner />}
           contentContainerStyle={[
             styles.listContent,
             { paddingBottom: 120 } // Increased padding to make room for footer
@@ -325,10 +339,22 @@ export default function CartScreen({ navigation }) {
           </View>
 
           <TouchableOpacity 
-            style={[styles.checkoutButton, isClosed && styles.checkoutButtonDisabled]}
+            style={[
+              styles.checkoutButton,
+              (isClosed || (pauseSettings?.isPaused && !pauseSettings?.allowPreorders)) && styles.checkoutButtonDisabled
+            ]}
             onPress={() => {
               if (isClosed) {
                 setClosedAlertVisible(true);
+                return;
+              }
+              if (pauseSettings?.isPaused && !pauseSettings?.allowPreorders) {
+                setAlertConfig({
+                  type: 'warning',
+                  title: pauseSettings.title || 'Store Operations Paused',
+                  message: pauseSettings.reason || 'Deliveries are temporarily paused and pre-orders are currently disabled. You can checkout as soon as the store reopens.',
+                });
+                setShowAlert(true);
                 return;
               }
               navigation.navigate('Checkout');
@@ -336,9 +362,17 @@ export default function CartScreen({ navigation }) {
             activeOpacity={0.8}
           >
             <Text style={styles.checkoutText}>
-              {isClosed ? 'STORE CLOSED (OPENS MON-FRI 9 AM)' : 'PROCEED TO CHECKOUT'}
+              {isClosed
+                ? 'STORE CLOSED (OPENS MON-FRI 9 AM)'
+                : pauseSettings?.isPaused && !pauseSettings?.allowPreorders
+                ? 'STORE PAUSED'
+                : 'PROCEED TO CHECKOUT'}
             </Text>
-            <Ionicons name={isClosed ? "lock-closed" : "arrow-forward"} size={20} color="#fff" />
+            <Ionicons
+              name={isClosed || (pauseSettings?.isPaused && !pauseSettings?.allowPreorders) ? 'lock-closed' : 'arrow-forward'}
+              size={20}
+              color="#fff"
+            />
           </TouchableOpacity>
         </View>
       </View>

@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { useFavorites } from '../../context/FavoritesContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import { isShopOpenNow, getShopHoursBadge } from '../../utils/shopHours';
+import { storeSettingsService } from '../../services/storeSettingsService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -66,7 +67,22 @@ export default function ProductDetailsScreen({ route, navigation }) {
     setQuantity(cleanText);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    try {
+      const pauseSettings = await storeSettingsService.getStorePauseSettings();
+      if (pauseSettings?.isPaused && !pauseSettings?.allowPreorders) {
+        setAlertConfig({
+          type: 'warning',
+          title: pauseSettings.title || 'Store Operations Paused',
+          message: pauseSettings.reason || 'Deliveries are temporarily paused and pre-orders are currently disabled.',
+        });
+        setShowAlert(true);
+        return;
+      }
+    } catch (e) {
+      console.warn('Pause check error:', e);
+    }
+
     if (totalPrice <= 0) {
       setAlertConfig({
         type: 'warning',
