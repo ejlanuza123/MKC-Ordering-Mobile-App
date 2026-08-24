@@ -393,14 +393,14 @@ export const PUERTO_PRINCESA_LANDMARKS = [
     lng: 118.808800 
   },
   { 
-    name: 'Petron San Pedro Hub', 
-    address: 'National Highway, San Pedro',
-    aliases: ['petron', 'petron hub', 'petron san pedro'], 
-    category: 'Petron Hub', 
-    icon: 'flame', 
-    barangay: 'San Pedro', 
-    lat: 9.753500, 
-    lng: 118.747900 
+    name: 'MKC Foods Corporation (Puerto Branch)', 
+    address: 'Puerto Princesa City',
+    aliases: ['mkc', 'mkc foods', 'mkc hub', 'mkc puerto'], 
+    category: 'Central Hub', 
+    icon: 'business', 
+    barangay: 'Tagumpay', 
+    lat: 9.73976834848973, 
+    lng: 118.7412934387447 
   }
 ];
 
