@@ -115,6 +115,7 @@ export default function RiderReviewsScreen({ navigation }) {
               rating: existingRating?.rating || 0,
               comment: existingRating?.comment || null,
               ratingId: existingRating?.id || null,
+              admin_reply: existingRating?.admin_reply || null,
             });
           }
         }
@@ -282,9 +283,17 @@ export default function RiderReviewsScreen({ navigation }) {
 
         {/* Comment Preview */}
         {item.submitted && item.comment && (
-          <Text style={styles.commentPreview} numberOfLines={1}>
+          <Text style={styles.commentPreview} numberOfLines={2}>
             {item.comment}
           </Text>
+        )}
+
+        {/* Admin Reply */}
+        {item.submitted && item.admin_reply && (
+          <View style={styles.adminReplyContainer}>
+            <Text style={styles.adminReplyLabel}>Official Store Response</Text>
+            <Text style={styles.adminReplyText} numberOfLines={3}>{item.admin_reply}</Text>
+          </View>
         )}
 
         {/* Delivery Date */}
@@ -647,6 +656,26 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 16,
     marginBottom: 4,
+  },
+  adminReplyContainer: {
+    backgroundColor: '#F0F9FF',
+    padding: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  adminReplyLabel: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#0284C7',
+    marginBottom: 2,
+  },
+  adminReplyText: {
+    fontSize: 12,
+    color: '#0F172A',
+    lineHeight: 16,
   },
   deliveryDate: {
     fontSize: 10,
