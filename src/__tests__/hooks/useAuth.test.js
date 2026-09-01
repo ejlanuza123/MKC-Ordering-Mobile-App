@@ -19,6 +19,14 @@ jest.mock('../../lib/supabase', () => ({
   },
 }));
 
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn().mockResolvedValue(null),
+  setItem: jest.fn().mockResolvedValue(null),
+  removeItem: jest.fn().mockResolvedValue(null),
+  multiRemove: jest.fn().mockResolvedValue(null),
+  getAllKeys: jest.fn().mockResolvedValue([]),
+}));
+
 const readCtx = { current: null };
 
 const AuthProbe = ({ useAuth }) => {

@@ -27,9 +27,14 @@ describe('riderPresenceService', () => {
   beforeEach(() => {
     jest.resetModules();
     jest.clearAllMocks();
+    jest.useFakeTimers();
   });
 
-  it('marks rider offline when AppState becomes background or inactive', async () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('marks rider offline when AppState becomes background', async () => {
     let appStateCallback;
     mockAppStateAddEventListener.mockImplementation((_event, cb) => {
       appStateCallback = cb;
@@ -39,21 +44,29 @@ describe('riderPresenceService', () => {
     mockFetch.mockResolvedValue({ isConnected: true });
 
     const { riderPresenceService } = require('../../services/riderPresenceService');
+    // Set intended online to true so it triggers the logic
+    riderPresenceService.setIntendedOnline(true);
 
     const setOnlineSpy = jest.spyOn(riderPresenceService, 'setOnlineStatus').mockResolvedValue(undefined);
-    const checkOnlineSpy = jest.spyOn(riderPresenceService, 'checkIfOnline').mockResolvedValue(true);
 
     riderPresenceService.subscribeToAppState('r-1');
 
+    // inactive should be ignored
     await appStateCallback('inactive');
-    expect(checkOnlineSpy).toHaveBeenCalledWith('r-1');
-    expect(setOnlineSpy).toHaveBeenCalledWith('r-1', false);
+    expect(setOnlineSpy).not.toHaveBeenCalled();
 
+    // background should trigger a timer
     await appStateCallback('background');
-    expect(checkOnlineSpy).toHaveBeenCalledWith('r-1');
+    expect(setOnlineSpy).not.toHaveBeenCalled();
+    
+    // Fast-forward past BACKGROUND_DEBOUNCE_MS (e.g. 5000)
+    jest.advanceTimersByTime(6000);
     expect(setOnlineSpy).toHaveBeenCalledWith('r-1', false);
 
+    // active should immediately set online
     await appStateCallback('active');
+    // It calls NetInfo.fetch() in active state which is a promise, so we must await next tick
+    await Promise.resolve();
     expect(setOnlineSpy).toHaveBeenCalledWith('r-1', true);
   });
 
@@ -66,14 +79,26 @@ describe('riderPresenceService', () => {
     });
 
     const { riderPresenceService } = require('../../services/riderPresenceService');
+    riderPresenceService.setIntendedOnline(true);
+    
     const setOnlineSpy = jest.spyOn(riderPresenceService, 'setOnlineStatus').mockResolvedValue(undefined);
 
     riderPresenceService.subscribeToNetworkState('r-2');
 
+    // Network drops - triggers timer
     await netInfoCallback({ isConnected: null });
+    expect(setOnlineSpy).not.toHaveBeenCalled();
+    
+    // Need mockFetch to return down state for the verify check
+    mockFetch.mockResolvedValue({ isConnected: false });
+    
+    // Fast-forward past DISCONNECT_DEBOUNCE_MS
+    jest.advanceTimersByTime(10000);
+    await Promise.resolve(); // flush promises
     expect(setOnlineSpy).toHaveBeenCalledWith('r-2', false);
 
-    await netInfoCallback({ isConnected: true, isInternetReachable: false });
-    expect(setOnlineSpy).toHaveBeenCalledWith('r-2', false);
+    // Network back - immediate
+    await netInfoCallback({ isConnected: true, isInternetReachable: true });
+    expect(setOnlineSpy).toHaveBeenCalledWith('r-2', true);
   });
 });

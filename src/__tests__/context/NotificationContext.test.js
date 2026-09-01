@@ -20,6 +20,12 @@ jest.mock('../../lib/supabase', () => ({
   },
 }));
 
+jest.mock('../../services/mobileNotificationService', () => ({
+  mobileNotificationService: {
+    sendLocalNotification: jest.fn().mockResolvedValue({ success: true }),
+  },
+}));
+
 const ctxRef = { current: null };
 
 const Probe = ({ useNotifications }) => {
