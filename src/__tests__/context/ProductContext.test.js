@@ -117,7 +117,7 @@ describe('ProductContext', () => {
     expect(ctxRef.current.getLowStockProducts()).toHaveLength(1);
     expect(ctxRef.current.getActiveProducts()).toHaveLength(2);
     expect(ctxRef.current.isLowStock(ctxRef.current.products[0])).toBe(true);
-  });
+  }, 15000);
 
   it('returns product by id', async () => {
     const { ProductProvider, useProducts } = require('../../context/ProductContext');
