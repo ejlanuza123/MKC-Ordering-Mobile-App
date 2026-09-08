@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCart } from '../../context/CartContext';
+import { useTheme } from '../../context/ThemeContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import StorePauseBanner from '../../components/StorePauseBanner';
 import { storeSettingsService } from '../../services/storeSettingsService';
@@ -21,6 +22,7 @@ import { isShopOpenNow, getShopHoursLabel } from '../../utils/shopHours';
 
 export default function CartScreen({ navigation }) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { colors, isDarkMode } = useTheme();
   const insets = useSafeAreaInsets();
   const total = getCartTotal();
   const [defaultDeliveryFee, setDefaultDeliveryFee] = useState(50);
@@ -118,15 +120,17 @@ export default function CartScreen({ navigation }) {
   };
 
   const renderItem = ({ item }) => {
-    const formattedQuantity = Number.isInteger(item.quantity)
-      ? String(item.quantity)
-      : Number(item.quantity).toFixed(2);
+    const formattedQuantity = item.quantity ? item.quantity.toFixed(2) : '1.00';
     
     return (
-      <TouchableOpacity style={styles.cartItem} activeOpacity={0.85} onPress={() => handleEditPress(item)}>
+      <TouchableOpacity 
+        style={[styles.cartItem, { backgroundColor: colors.surface, borderColor: colors.border }]} 
+        activeOpacity={0.85} 
+        onPress={() => handleEditPress(item)}
+      >
         <View style={styles.itemInfo}>
           <View style={styles.itemHeader}>
-            <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+            <Text style={[styles.itemName, { color: colors.textPrimary }]} numberOfLines={1}>{item.name}</Text>
             <TouchableOpacity 
               onPress={() => handleRemovePress(item)}
               style={styles.removeBtn}
@@ -137,16 +141,16 @@ export default function CartScreen({ navigation }) {
           </View>
           
           <View style={styles.itemDetailsRow}>
-            <Text style={styles.itemDetails}>
+            <Text style={[styles.itemDetails, { color: colors.textSecondary }]}>
               {formattedQuantity} {item.unit || 'pcs'} 
               {' @ '}₱{item.current_price.toFixed(2)}
             </Text>
-            <Text style={styles.itemTotal}>
+            <Text style={[styles.itemTotal, { color: colors.primary }]}>
               ₱{item.totalItemPrice.toFixed(2)}
             </Text>
           </View>
 
-          <Text style={styles.editHintText}>
+          <Text style={[styles.editHintText, { color: colors.textMuted }]}>
             Tap item to edit quantity
           </Text>
         </View>
@@ -157,7 +161,7 @@ export default function CartScreen({ navigation }) {
   // Empty state with consistent header layout
   if (cartItems.length === 0) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <CustomAlertModal
           visible={showAlert}
           onClose={() => setShowAlert(false)}
@@ -168,16 +172,16 @@ export default function CartScreen({ navigation }) {
         />
 
         {/* Custom header for empty state to match main screen */}
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <View style={styles.headerContent}>
             <TouchableOpacity 
               onPress={() => navigation.goBack()}
               style={styles.backButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="arrow-back" size={24} color="#0033A0" />
+              <Ionicons name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>My Cart</Text>
+            <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>My Cart</Text>
             <View style={{width: 40}} />
           </View>
         </View>
@@ -186,15 +190,15 @@ export default function CartScreen({ navigation }) {
 
         {/* Empty Content */}
         <View style={[styles.emptyContent, { paddingBottom: insets.bottom + 20 }]}>
-          <View style={styles.emptyIcon}>
-            <Ionicons name="cart-outline" size={80} color="#ccc" />
+          <View style={[styles.emptyIcon, isDarkMode && { backgroundColor: colors.surfaceElevated }]}>
+            <Ionicons name="cart-outline" size={80} color={colors.textMuted} />
           </View>
-          <Text style={styles.emptyTitle}>Your cart is empty</Text>
-          <Text style={styles.emptySubtitle}>
+          <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>Your cart is empty</Text>
+          <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
             Add some products to get started
           </Text>
           <TouchableOpacity 
-            style={styles.shopButton}
+            style={[styles.shopButton, { backgroundColor: colors.primary }]}
             onPress={() => {
               if (pauseSettings?.isPaused && !pauseSettings?.allowPreorders) {
                 setAlertConfig({
@@ -256,37 +260,38 @@ export default function CartScreen({ navigation }) {
         onRequestClose={() => setEditModalVisible(false)}
       >
         <View style={styles.modalOverlayEditor}>
-          <View style={styles.modalCardEditor}>
+          <View style={[styles.modalCardEditor, { backgroundColor: colors.surface }]}>
             <View style={styles.modalEditorHeader}>
-              <Text style={styles.modalEditorTitle}>Edit Quantity</Text>
+              <Text style={[styles.modalEditorTitle, { color: colors.textPrimary }]}>Edit Quantity</Text>
               <TouchableOpacity onPress={() => setEditModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#374151" />
+                <Ionicons name="close" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
 
             {itemToEdit && (
               <>
-                <Text style={styles.modalEditorItemName}>{itemToEdit.name}</Text>
-                <Text style={styles.modalEditorItemPrice}>₱{itemToEdit.current_price.toFixed(2)} per {itemToEdit.unit}</Text>
+                <Text style={[styles.modalEditorItemName, { color: colors.textPrimary }]}>{itemToEdit.name}</Text>
+                <Text style={[styles.modalEditorItemPrice, { color: colors.textSecondary }]}>₱{itemToEdit.current_price.toFixed(2)} per {itemToEdit.unit}</Text>
 
                 <View style={styles.modalInputWrap}>
                   <TextInput
-                    style={styles.modalInput}
+                    style={[styles.modalInput, { backgroundColor: colors.surfaceElevated, color: colors.textPrimary, borderColor: colors.border }]}
                     keyboardType="numeric"
                     value={editValue}
                     onChangeText={(text) => setEditValue(text.replace(/[^0-9.]/g, ''))}
                     placeholder="Enter quantity"
+                    placeholderTextColor={colors.textMuted}
                   />
                 </View>
 
-                <View style={styles.modalSummaryBox}>
-                  <Text style={styles.modalSummaryText}>Qty: {getEditedMetrics().quantity.toFixed(2)}</Text>
-                  <Text style={styles.modalSummaryText}>
+                <View style={[styles.modalSummaryBox, { backgroundColor: colors.surfaceElevated }]}>
+                  <Text style={[styles.modalSummaryText, { color: colors.textPrimary }]}>Qty: {getEditedMetrics().quantity.toFixed(2)}</Text>
+                  <Text style={[styles.modalSummaryText, { color: colors.textPrimary }]}>
                     Total: ₱{getEditedMetrics().total.toFixed(2)}
                   </Text>
                 </View>
 
-                <TouchableOpacity style={styles.modalSaveBtn} onPress={handleSaveEdit}>
+                <TouchableOpacity style={[styles.modalSaveBtn, { backgroundColor: colors.primary }]} onPress={handleSaveEdit}>
                   <Text style={styles.modalSaveText}>Save Changes</Text>
                 </TouchableOpacity>
               </>
@@ -294,20 +299,20 @@ export default function CartScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         {/* Custom header for main screen */}
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <View style={styles.headerContent}>
             <TouchableOpacity 
               onPress={() => navigation.goBack()}
               style={styles.backButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="arrow-back" size={24} color="#0033A0" />
+              <Ionicons name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
-              <Text style={styles.headerTitle}>My Cart</Text>
-              <Text style={styles.headerSubtitle}>
+              <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>My Cart</Text>
+              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
                 {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
               </Text>
             </View>
@@ -317,13 +322,13 @@ export default function CartScreen({ navigation }) {
 
         {/* Store Closed Notification Banner */}
         {isClosed && (
-          <View style={styles.storeClosedBanner}>
+          <View style={[styles.storeClosedBanner, isDarkMode && { backgroundColor: '#7F1D1D30', borderColor: '#DC262660' }]}>
             <View style={styles.storeClosedIconWrap}>
               <Ionicons name="time" size={20} color="#DC2626" />
             </View>
             <View style={styles.storeClosedTextWrap}>
               <Text style={styles.storeClosedTitle}>Store is Currently Closed</Text>
-              <Text style={styles.storeClosedSub}>
+              <Text style={[styles.storeClosedSub, { color: colors.textSecondary }]}>
                 Ordering is available Mon–Fri, 9:00 AM to 5:00 PM. Checkout is temporarily locked.
               </Text>
             </View>
@@ -344,20 +349,20 @@ export default function CartScreen({ navigation }) {
         />
 
         {/* Fixed Footer */}
-        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom, backgroundColor: colors.surface, borderTopColor: colors.border }]}>
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal</Text>
-              <Text style={styles.summaryValue}>₱{total.toFixed(2)}</Text>
+              <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Subtotal</Text>
+              <Text style={[styles.summaryValue, { color: colors.textPrimary }]}>₱{total.toFixed(2)}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Delivery Fee</Text>
-              <Text style={styles.summaryValue}>{deliveryFee === 0 ? 'FREE' : `₱${deliveryFee.toFixed(2)}`}</Text>
+              <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Delivery Fee</Text>
+              <Text style={[styles.summaryValue, { color: colors.textPrimary }]}>{deliveryFee === 0 ? 'FREE' : `₱${deliveryFee.toFixed(2)}`}</Text>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Total to Pay</Text>
-              <Text style={styles.totalAmount}>₱{totalToPay.toFixed(2)}</Text>
+              <Text style={[styles.totalLabel, { color: colors.textPrimary }]}>Total to Pay</Text>
+              <Text style={[styles.totalAmount, { color: colors.primary }]}>₱{totalToPay.toFixed(2)}</Text>
             </View>
           </View>
 
