@@ -20,10 +20,12 @@ import { useFavorites } from '../../context/FavoritesContext';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import { isShopOpenNow, getShopHoursBadge } from '../../utils/shopHours';
 import { storeSettingsService } from '../../services/storeSettingsService';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ProductDetailsScreen({ route, navigation }) {
+  const { colors, isDarkMode } = useTheme();
   const { product } = route.params;
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -129,7 +131,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
         confirmText="OK"
       />
       
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
         <KeyboardAvoidingView 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
@@ -150,7 +152,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
             ) : (
               <View style={[
                 styles.placeholderImage, 
-                { backgroundColor: '#0033A0' }
+                { backgroundColor: colors.primary }
               ]}>
                 <Ionicons 
                   name="nutrition" 
@@ -162,11 +164,11 @@ export default function ProductDetailsScreen({ route, navigation }) {
           </View>
 
           {/* Content - Takes remaining space */}
-          <View style={styles.content}>
+          <View style={[styles.content, { backgroundColor: colors.background }]}>
             {/* Title & Price */}
             <View style={styles.headerRow}>
               <View style={styles.titleContainer}>
-                <Text style={styles.title} numberOfLines={2}>{product.name}</Text>
+                <Text style={[styles.title, { color: isDarkMode ? colors.textPrimary : colors.primary }]} numberOfLines={2}>{product.name}</Text>
                 <View style={styles.categoryContainer}>
                   {product.stock_quantity > 0 && (
                     <View style={styles.stockBadge}>
@@ -183,9 +185,9 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 </View>
               </View>
               <View style={styles.priceContainer}>
-                <Text style={styles.unitPrice}>
+                <Text style={[styles.unitPrice, { color: colors.primary }]}>
                   ₱{product.current_price.toFixed(2)}
-                  <Text style={styles.unit}>/{product.unit}</Text>
+                  <Text style={[styles.unit, { color: colors.textSecondary }]}>/{product.unit}</Text>
                 </Text>
               </View>
               {/* favorite icon in details header */}
@@ -204,64 +206,64 @@ export default function ProductDetailsScreen({ route, navigation }) {
 
             {product.description && (
               <View style={styles.descriptionContainer}>
-                <Text style={styles.descriptionTitle}>Description</Text>
-                <Text style={styles.descriptionText} numberOfLines={2}>
+                <Text style={[styles.descriptionTitle, { color: colors.textPrimary }]}>Description</Text>
+                <Text style={[styles.descriptionText, { color: colors.textSecondary }]} numberOfLines={2}>
                   {product.description}
                 </Text>
               </View>
             )}
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             {/* Quantity Input Section */}
-            <Text style={styles.sectionTitle}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
               Select Quantity
             </Text>
 
             {/* Input Field */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>
+              <Text style={[styles.inputLabel, { color: colors.textPrimary }]}>
                 Quantity
               </Text>
-              <View style={styles.inputWrapper}>
+              <View style={[styles.inputWrapper, { borderColor: colors.primary, backgroundColor: isDarkMode ? colors.surfaceElevated : '#fff' }]}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: colors.textPrimary }]}
                   value={quantity}
                   onChangeText={handleInputChange}
                   keyboardType="decimal-pad"
                   placeholder="0"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={colors.textSecondary}
                 />
-                <Text style={styles.suffix}>
+                <Text style={[styles.suffix, { color: colors.textSecondary }]}>
                   {product.unit || 'pcs'}
                 </Text>
               </View>
               
               {/* Calculation Display */}
-              <Text style={styles.helperText}>
+              <Text style={[styles.helperText, { color: colors.primary }]}>
                 Total: ₱{totalPrice.toFixed(2)}
               </Text>
             </View>
 
             {/* Delivery Info */}
-            <View style={styles.deliveryInfo}>
-              <Ionicons name="time" size={20} color="#0033A0" />
-              <Text style={styles.deliveryText}>15-30 min delivery • Puerto Princesa Area</Text>
+            <View style={[styles.deliveryInfo, { backgroundColor: isDarkMode ? colors.surfaceElevated : '#f0f7ff' }]}>
+              <Ionicons name="time" size={20} color={colors.primary} />
+              <Text style={[styles.deliveryText, { color: isDarkMode ? colors.textPrimary : colors.primary }]}>15-30 min delivery • Puerto Princesa Area</Text>
             </View>
           </View>
         </KeyboardAvoidingView>
 
         {/* Fixed Bottom Bar */}
-        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom, backgroundColor: colors.surface, borderTopColor: colors.border, shadowColor: colors.shadow }]}>
           <View style={styles.footerContent}>
             <View>
-              <Text style={styles.footerLabel}>Total Amount</Text>
-              <Text style={styles.footerPrice}>
+              <Text style={[styles.footerLabel, { color: colors.textSecondary }]}>Total Amount</Text>
+              <Text style={[styles.footerPrice, { color: isDarkMode ? colors.textPrimary : colors.primary }]}>
                 ₱{totalPrice.toFixed(2)}
               </Text>
             </View>
             <TouchableOpacity 
-              style={[styles.addButton, !product.stock_quantity && styles.disabledButton]}
+              style={[styles.addButton, { backgroundColor: colors.primary }, !product.stock_quantity && styles.disabledButton]}
               onPress={handleAddToCart}
               disabled={!product.stock_quantity}
               activeOpacity={0.8}
