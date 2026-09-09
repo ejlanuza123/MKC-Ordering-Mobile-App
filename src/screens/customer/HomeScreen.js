@@ -256,7 +256,7 @@ export default function HomeScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.background }]}>
-      <View style={styles.backgroundCanvas} pointerEvents="none">
+      <View style={[styles.backgroundCanvas, isDarkMode && { backgroundColor: colors.background }]} pointerEvents="none">
         <View style={[styles.backgroundOrb, styles.backgroundOrbTop, isDarkMode && { opacity: 0.15 }]} />
         <View style={[styles.backgroundOrb, styles.backgroundOrbMid, isDarkMode && { opacity: 0.15 }]} />
         <View style={[styles.backgroundOrb, styles.backgroundOrbBottom, isDarkMode && { opacity: 0.15 }]} />
@@ -266,7 +266,7 @@ export default function HomeScreen({ navigation, route }) {
       <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={styles.headerTop}>
           <View style={styles.brandContainerHeader}>
-            <View style={styles.logoWrapperHeader}>
+            <View style={[styles.logoWrapperHeader, isDarkMode && { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
               <Image
                 source={require('../../../assets/mkc-logo.png')}
                 style={styles.brandLogoHeader}
@@ -319,11 +319,18 @@ export default function HomeScreen({ navigation, route }) {
         {/* Quick Actions - Enhanced Buttons */}
         <View style={styles.quickActionsHeader}>
           <TouchableOpacity 
-            style={styles.headerActionButton}
+            style={[
+              styles.headerActionButton,
+              isDarkMode && {
+                backgroundColor: colors.surfaceElevated,
+                borderColor: colors.border,
+                shadowColor: '#000000',
+              }
+            ]}
             onPress={() => navigation.navigate('Cart')}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }, isDarkMode && { borderColor: colors.border }]}>
               <Ionicons name="cart" size={20} color="#F4C430" />
               {cartItems.length > 0 && (
                 <View style={styles.headerActionBadge}>
@@ -344,11 +351,18 @@ export default function HomeScreen({ navigation, route }) {
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={styles.headerActionButton}
+            style={[
+              styles.headerActionButton,
+              isDarkMode && {
+                backgroundColor: colors.surfaceElevated,
+                borderColor: colors.border,
+                shadowColor: '#000000',
+              }
+            ]}
             onPress={() => navigation.navigate('OrderHistory')}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }, isDarkMode && { borderColor: colors.border }]}>
               <Ionicons name="time" size={20} color="#F4C430" />
             </View>
             <Text
@@ -362,11 +376,18 @@ export default function HomeScreen({ navigation, route }) {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.headerActionButton}
+            style={[
+              styles.headerActionButton,
+              isDarkMode && {
+                backgroundColor: colors.surfaceElevated,
+                borderColor: colors.border,
+                shadowColor: '#000000',
+              }
+            ]}
             onPress={() => navigation.navigate('Favorites')}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>    
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }, isDarkMode && { borderColor: colors.border }]}>    
               <Ionicons name="heart" size={20} color="#ED2939" />
             </View>
             <Text
@@ -380,11 +401,18 @@ export default function HomeScreen({ navigation, route }) {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.headerActionButton}
+            style={[
+              styles.headerActionButton,
+              isDarkMode && {
+                backgroundColor: colors.surfaceElevated,
+                borderColor: colors.border,
+                shadowColor: '#000000',
+              }
+            ]}
             onPress={() => navigation.navigate('Reservation', { openNotice: true })}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }, isDarkMode && { borderColor: colors.border }]}>
               <Ionicons name="calendar" size={20} color="#10B981" />
             </View>
             <Text
@@ -398,11 +426,18 @@ export default function HomeScreen({ navigation, route }) {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.headerActionButton}
+            style={[
+              styles.headerActionButton,
+              isDarkMode && {
+                backgroundColor: colors.surfaceElevated,
+                borderColor: colors.border,
+                shadowColor: '#000000',
+              }
+            ]}
             onPress={() => setShowReviewModal(true)}
             activeOpacity={0.7}
           >
-            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }]}>
+            <View style={[styles.headerActionIcon, { backgroundColor: '#0033A0' }, isDarkMode && { borderColor: colors.border }]}>
               <Ionicons name="star" size={20} color="#F59E0B" />
             </View>
             <Text
@@ -783,6 +818,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+    overflow: 'hidden',
     elevation: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
