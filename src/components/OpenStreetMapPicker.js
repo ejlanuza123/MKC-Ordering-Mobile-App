@@ -25,7 +25,8 @@ import {
   detectNearestBarangay, 
   searchPuertoPrincesaPlaces,
   PUERTO_PRINCESA_BARANGAYS,
-  PUERTO_PRINCESA_LANDMARKS
+  PUERTO_PRINCESA_LANDMARKS,
+  MKC_CENTRAL_HUB_COORDINATES
 } from '../utils/location';
 import { addressLearningService } from '../services/addressLearningService';
 
@@ -47,7 +48,7 @@ export default function OpenStreetMapPicker({
   const [loading, setLoading] = useState(true);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [detectedBarangay, setDetectedBarangay] = useState('San Pedro');
+  const [detectedBarangay, setDetectedBarangay] = useState(MKC_CENTRAL_HUB_COORDINATES.barangay || 'Tagumpay');
   const [streetAddress, setStreetAddress] = useState('');
   const [purokLandmark, setPurokLandmark] = useState('');
   const [fullAddress, setFullAddress] = useState(initialAddress || '');
@@ -71,8 +72,8 @@ export default function OpenStreetMapPicker({
 
   // Default Puerto Princesa City Hub coordinates (MKC Central Kitchen)
   const PUERTO_PRINCESA_DEFAULT = {
-    lat: 9.7534772,
-    lng: 118.7478688
+    lat: MKC_CENTRAL_HUB_COORDINATES.lat,
+    lng: MKC_CENTRAL_HUB_COORDINATES.lng
   };
 
   const handleMapMovementState = (moving) => {
@@ -161,7 +162,7 @@ export default function OpenStreetMapPicker({
               className: '',
               iconAnchor: [45, 12]
             });
-            L.marker([9.7535, 118.7479], { icon: hubIcon }).addTo(map);
+            L.marker([${MKC_CENTRAL_HUB_COORDINATES.lat}, ${MKC_CENTRAL_HUB_COORDINATES.lng}], { icon: hubIcon }).addTo(map);
 
             // Center movement listeners
             map.on('movestart', function() {

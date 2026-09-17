@@ -1,6 +1,7 @@
 import * as Location from 'expo-location';
 import { supabase } from '../lib/supabase';
 import { Platform } from 'react-native';
+import { MKC_CENTRAL_HUB_COORDINATES } from './location';
 
 /**
  * Rider Location Tracking Utilities
@@ -323,9 +324,9 @@ export const isWithinServiceArea = (latitude, longitude) => {
 };
 
 export const DEFAULT_STORE_LOCATION = {
-  latitude: 9.754820,
-  longitude: 118.748890,
-  name: 'MKC Foods Corporation',
+  latitude: MKC_CENTRAL_HUB_COORDINATES.lat,
+  longitude: MKC_CENTRAL_HUB_COORDINATES.lng,
+  name: MKC_CENTRAL_HUB_COORDINATES.name,
 };
 
 /**

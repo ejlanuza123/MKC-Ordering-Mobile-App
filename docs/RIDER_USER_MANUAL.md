@@ -52,7 +52,7 @@ Rider accounts cannot self-register directly in the mobile app.
 ## 5. Rider Interactive GPS Map & Turn Navigation
 
 1. Open the **Rider Map** (`🗺️` tab).
-2. Store Hub Location: **MKC Foods Corporation (Puerto Branch)** (`9.7395463, 118.7386649`).
+2. Store Hub Location: **MKC Foods Corporation (Puerto Branch)** (`9.7397683, 118.7412934`).
 3. View your live GPS position (`🛵`) moving on the interactive Leaflet map in real time.
 4. View customer drop-off pins (`📍`) with street address, phone number, and landmarks.
 5. Check route distance (km) and estimated travel time.

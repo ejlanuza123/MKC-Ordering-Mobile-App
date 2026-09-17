@@ -19,7 +19,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import * as Location from 'expo-location';
-import { requestLocationPermission, PUERTO_PRINCESA_LANDMARKS } from '../../utils/location';
+import { requestLocationPermission, PUERTO_PRINCESA_LANDMARKS, MKC_CENTRAL_HUB_COORDINATES } from '../../utils/location';
 import CustomAlertModal from '../../components/CustomAlertModal';
 import { startLocationTracking, stopLocationTracking } from '../../utils/riderLocation';
 import { riderPresenceService } from '../../services/riderPresenceService';
@@ -60,10 +60,12 @@ export default function RiderMapScreen({ navigation, route }) {
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(null);
   const [onlineStatus, setOnlineStatus] = useState(true);
 
-  // MKC Foods Corporation Station coordinates (178 Rizal Ave, Brgy Maningning, Puerto Princesa City)
+  // MKC Foods Corporation Central Hub coordinates (Puerto Branch, Brgy Tagumpay, Puerto Princesa City)
   const MKC_STORE_COORDS = {
-    lat: 9.7395476,
-    lng: 118.7407811
+    lat: MKC_CENTRAL_HUB_COORDINATES.lat,
+    lng: MKC_CENTRAL_HUB_COORDINATES.lng,
+    name: MKC_CENTRAL_HUB_COORDINATES.name,
+    barangay: MKC_CENTRAL_HUB_COORDINATES.barangay,
   };
 
   // Auto-focus delivery if routed with parameters
@@ -422,6 +424,13 @@ export default function RiderMapScreen({ navigation, route }) {
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
           }
           
+          .store-pin {
+            font-size: 22px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+            text-align: center;
+          }
+          
           /* Popup styles */
           .delivery-popup {
             min-width: 220px;
@@ -589,6 +598,7 @@ export default function RiderMapScreen({ navigation, route }) {
           window.currentLayerName = '${mapLayer}';
           window.showLandmarks = ${showLandmarks ? 'true' : 'false'};
           window.landmarksData = ${JSON.stringify(PUERTO_PRINCESA_LANDMARKS || [])};
+          window.storeData = ${JSON.stringify(MKC_STORE_COORDS)};
           
           // Delivery markers data
           window.deliveries = ${JSON.stringify(markers)};
@@ -637,6 +647,9 @@ export default function RiderMapScreen({ navigation, route }) {
                 document.body.classList.add('dark-mode-active');
               }
               
+              // Add store hub marker
+              addStoreMarker();
+
               // Add rider marker
               addRiderMarker();
               
@@ -682,6 +695,22 @@ export default function RiderMapScreen({ navigation, route }) {
             }
           }
 
+          function addStoreMarker() {
+            try {
+              if (window.storeMarker && window.map) {
+                window.map.removeLayer(window.storeMarker);
+              }
+              const store = window.storeData || { lat: ${MKC_STORE_COORDS.lat}, lng: ${MKC_STORE_COORDS.lng}, name: '${MKC_STORE_COORDS.name || 'MKC Central Hub'}' };
+              window.storeMarker = L.marker([store.lat, store.lng], {
+                icon: L.divIcon({ className: 'store-pin', html: '🏬', iconSize: [28, 28], iconAnchor: [14, 14] }),
+                zIndexOffset: 950
+              }).addTo(window.map);
+              window.storeMarker.bindPopup('<b>🏬 ' + (store.name || 'MKC Central Hub') + '</b><br/>Central Hub Dispatch');
+            } catch (err) {
+              console.error('Error adding store marker:', err);
+            }
+          }
+
           function addLandmarkMarkers() {
             try {
               window.landmarkMarkers = [];
@@ -693,7 +722,7 @@ export default function RiderMapScreen({ navigation, route }) {
                 const icon = L.divIcon({
                   html: \`
                     <div class="landmark-badge">
-                      <span>\${lm.category === 'mall' ? '🛍️' : lm.category === 'park' ? '🌴' : lm.category === 'airport' ? '✈️' : lm.category === 'government' ? '🏛️' : lm.category === 'landmark' ? '🏟️' : '📍'}</span>
+                      <span>\${lm.category === 'Central Hub' ? '🏬' : lm.category === 'mall' ? '🛍️' : lm.category === 'park' ? '🌴' : lm.category === 'airport' ? '✈️' : lm.category === 'government' ? '🏛️' : lm.category === 'landmark' ? '🏟️' : '📍'}</span>
                       <span>\${lm.name}</span>
                     </div>
                   \`,

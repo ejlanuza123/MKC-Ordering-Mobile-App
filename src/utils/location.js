@@ -415,6 +415,18 @@ export const PUERTO_PRINCESA_LANDMARKS = [
 ];
 
 /**
+ * Standard Central Hub coordinates for MKC Foods Corporation (Puerto Branch)
+ */
+export const MKC_CENTRAL_HUB_COORDINATES = {
+  lat: 9.73976834848973,
+  lng: 118.7412934387447,
+  name: 'MKC Foods Corporation (Puerto Branch)',
+  category: 'Central Hub',
+  barangay: 'Tagumpay',
+  address: 'Puerto Princesa City'
+};
+
+/**
  * Instant local search engine for Puerto Princesa places, landmarks, and barangays
  */
 export const searchPuertoPrincesaPlaces = (query) => {
@@ -548,7 +560,7 @@ export const detectNearestBarangay = (latitude, longitude, textHint = '') => {
     }
   }
 
-  return 'San Pedro'; // Default Puerto Princesa commercial hub
+  return 'Tagumpay'; // Default MKC Foods central hub barangay
 };
 
 /**

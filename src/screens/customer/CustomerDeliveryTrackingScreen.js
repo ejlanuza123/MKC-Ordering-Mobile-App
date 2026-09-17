@@ -17,7 +17,7 @@ import { networkStateService } from '../../services/networkStateService';
 import { chatService } from '../../services/chatService';
 import { useAuth } from '../../context/AuthContext';
 import OrderDeliveryTimeline from '../../components/OrderDeliveryTimeline';
-import { PUERTO_PRINCESA_LANDMARKS, detectNearestLandmark } from '../../utils/location';
+import { PUERTO_PRINCESA_LANDMARKS, detectNearestLandmark, MKC_CENTRAL_HUB_COORDINATES } from '../../utils/location';
 import { getStoreToCustomerFallback } from '../../utils/riderLocation';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -80,8 +80,8 @@ export default function CustomerDeliveryTrackingScreen({ navigation, route }) {
   }, [riderLocation]);
 
   const buildMapHtml = useCallback(() => {
-    const destinationLat = destination?.lat ?? 9.7395476;
-    const destinationLng = destination?.lng ?? 118.7407811;
+    const destinationLat = destination?.lat ?? MKC_CENTRAL_HUB_COORDINATES.lat;
+    const destinationLng = destination?.lng ?? MKC_CENTRAL_HUB_COORDINATES.lng;
     const landmarksJson = JSON.stringify(PUERTO_PRINCESA_LANDMARKS || []);
 
     return `

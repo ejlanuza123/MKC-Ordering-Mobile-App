@@ -3,7 +3,8 @@ import {
   formatAddress, 
   searchPuertoPrincesaPlaces, 
   PUERTO_PRINCESA_BARANGAYS,
-  PUERTO_PRINCESA_LANDMARKS 
+  PUERTO_PRINCESA_LANDMARKS,
+  MKC_CENTRAL_HUB_COORDINATES
 } from '../../utils/location';
 
 describe('Puerto Princesa Location Utilities - Verified Landmarks & Barangays', () => {
@@ -189,5 +190,14 @@ describe('Puerto Princesa Location Utilities - Verified Landmarks & Barangays', 
     expect(formatted).toContain('Brgy. San Miguel');
     expect(formatted).toContain('Puerto Princesa City');
     expect(formatted).toContain('Palawan');
+  });
+
+  it('exports accurate MKC_CENTRAL_HUB_COORDINATES and defaults to Tagumpay', () => {
+    expect(MKC_CENTRAL_HUB_COORDINATES).toBeDefined();
+    expect(MKC_CENTRAL_HUB_COORDINATES.lat).toBeCloseTo(9.739768, 4);
+    expect(MKC_CENTRAL_HUB_COORDINATES.lng).toBeCloseTo(118.741293, 4);
+    expect(MKC_CENTRAL_HUB_COORDINATES.barangay).toBe('Tagumpay');
+    expect(detectNearestBarangay(MKC_CENTRAL_HUB_COORDINATES.lat, MKC_CENTRAL_HUB_COORDINATES.lng)).toBe('Tagumpay');
+    expect(detectNearestBarangay(null, null, null)).toBe('Tagumpay');
   });
 });
