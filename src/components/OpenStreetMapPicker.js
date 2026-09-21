@@ -158,9 +158,9 @@ export default function OpenStreetMapPicker({
 
             // Add Puerto Princesa Hub Marker
             const hubIcon = L.divIcon({
-              html: '<div style="background:${colors.primary};color:white;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:bold;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);white-space:nowrap">🍽️ MKC Central Kitchen</div>',
+              html: '<div style="background:${colors.primary};color:white;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:bold;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);white-space:nowrap">🏬 MKC Foods Corp - Puerto Branch</div>',
               className: '',
-              iconAnchor: [45, 12]
+              iconAnchor: [55, 12]
             });
             L.marker([${MKC_CENTRAL_HUB_COORDINATES.lat}, ${MKC_CENTRAL_HUB_COORDINATES.lng}], { icon: hubIcon }).addTo(map);
 

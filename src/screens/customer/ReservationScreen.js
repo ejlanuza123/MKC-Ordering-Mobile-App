@@ -770,7 +770,7 @@ export default function ReservationScreen({ navigation, route }) {
                   </View>
                 </View>
 
-                <Text style={styles.notesLabel}>Add notes for the station (optional)</Text>
+                <Text style={styles.notesLabel}>Add notes for the store (optional)</Text>
                 <TextInput
                   value={notes}
                   onChangeText={setNotes}

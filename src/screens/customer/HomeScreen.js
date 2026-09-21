@@ -51,7 +51,7 @@ const HOME_WELCOME_STEPS = [
   {
     icon: 'calendar',
     color: '#10B981',
-    title: 'Reserve Your Station Slot',
+    title: 'Reserve Your Store Slot',
     description: 'Use Reserve to schedule product pickup or delivery times and manage your reservations easily.',
   },
 ];
