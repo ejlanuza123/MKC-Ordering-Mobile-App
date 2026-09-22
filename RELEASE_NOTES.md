@@ -1,30 +1,33 @@
 # MKC Foods Corporation Ordering App — Release Notes
 
 ## 📱 Release Information
-- **Version:** `v2.25.11`
+- **Version:** `v2.25.13`
 - **Platform:** Android / iOS (React Native + Expo 55)
+- **APK Download:** [Download MKC Foods Corporation v2.25.13 APK](https://drive.google.com/file/d/1LFl9TMFmcw0WMfl3esCmQ1WIbDNVzdpP/view?usp=drive_link)
+- **Direct Link:** `https://drive.google.com/file/d/1LFl9TMFmcw0WMfl3esCmQ1WIbDNVzdpP/view?usp=drive_link`
+
+---
+
+## 🚀 What's New in v2.25.13
+
+### 🏬 Central Hub & Address Pin Precision
+- **Official Central Hub Coordinates:** Realigned customer address picker to the verified MKC Central Hub coordinates (`9.73976834848973, 118.7412934387447`, Brgy. Tagumpay), completely removing legacy fallback coordinates.
+- **Rider Navigation Hub Pin:** Added dedicated `🏬 MKC Foods Corporation (Puerto Branch)` store pin with popup dispatch details in `RiderMapScreen.js`.
+- **Map Picker Badge Standardization:** Standardized customer map picker pin label to `🏬 MKC Foods Corp - Puerto Branch` to match the official landmark registry.
+- **Store-to-Customer Distance & ETA Fallback:** Updated fallback routing in `riderLocation.js` to anchor directly to the Tagumpay Central Hub.
+
+### 🍽️ Branding & Copy Standardization
+- **Cleaned Up Reservation Copy:** Replaced gas station terminology in customer reservation flows:
+  - Onboarding Step: `Reserve Your Store Slot`
+  - Reservation Screen: `Add notes for the store (optional)`
+
+---
+
+## 📜 Previous Releases
+
+### 📱 v2.25.11
 - **APK Download:** [Download MKC Foods Corporation v2.25.11 APK](https://drive.google.com/file/d/1wuA_S__0qJWHIiEvb45lpXtx5xizoidt/view?usp=drive_link)
-- **Direct Link:** `https://drive.google.com/file/d/1wuA_S__0qJWHIiEvb45lpXtx5xizoidt/view?usp=drive_link`
-
----
-
-## 🚀 What's New in v2.25.11
-
-### 📢 Admin Push Notification Broadcaster & Deep Linking
-- **Interactive Broadcast Detail Modal:** Tapping push notifications opens a high-contrast modal with official announcement badges (`🌧️ Weather`, `🔥 Promo`, `📢 Announcement`, `⚠️ Emergency`).
-- **1-Tap Social Sharing:** Native OS social sharing via `Share.share` lets users immediately forward food specials or weather advisories via Messenger, WhatsApp, or SMS.
-- **Contextual Navigation:** Fast shortcuts directly to the food menu for customers, or active delivery queue for riders.
-- **Cold-Start & Tray Click Routing:** Clicking push notifications in the smartphone notification shade or lockscreen correctly routes directly to the broadcast detail modal, even when the app was completely closed or killed.
-
-### 🎨 Dark Mode & Contrast Enhancements
-- **Smooth Theme Animations:** Added spinning & scaling icon animations for the Dark Mode switch in Customer and Rider Profile screens.
-- **Neon Status Indicators:** High-contrast neon badges for food order statuses in dark mode for optimal day/night visibility.
-- **Themed Borders & Layouts:** Polished checkout terms boxes, text inputs, and modals to eliminate hardcoded backgrounds and text color clipping.
-
----
-
-## 🛠️ Bug Fixes & Stability
-- **Fixed System Tray Navigation:** Resolved issue where clicking notifications in the smartphone notification tray only opened the app without showing the announcement modal.
-- **Fixed Real-Time Foreground Notifications:** Foreground broadcast alerts now carry full metadata and category formatting.
-- **Fixed Navigation Theme Font Crash:** Resolved `regular of undefined` error in custom navigation headers.
-- **Database Check Constraint:** Updated notification check constraint to allow `'broadcast'` notification type.
+- **Admin Push Notification Broadcaster:** Interactive detail modal with category badges (`Weather`, `Promo`, `Announcement`, `Emergency`).
+- **Cold-Start & Tray Click Routing:** Direct navigation to broadcast details when tapping notifications in the phone shade or lockscreen.
+- **1-Tap Social Sharing:** Native OS sharing for food specials and advisories.
+- **Dark Mode Polish:** Animated theme toggle transitions, neon status indicators, and themed checkout terms container.
