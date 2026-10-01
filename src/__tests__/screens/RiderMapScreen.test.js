@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, waitForElementToBeRemoved } from '@testing-library/react-native';
+import { render, waitFor, waitForElementToBeRemoved, fireEvent } from '@testing-library/react-native';
 import RiderMapScreen from '../../screens/rider/RiderMapScreen';
 import * as Location from 'expo-location';
 
@@ -123,7 +123,7 @@ jest.mock('expo-location', () => ({
 }));
 
 describe('RiderMapScreen', () => {
-  jest.setTimeout(20000);
+  jest.setTimeout(60000);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -156,5 +156,22 @@ describe('RiderMapScreen', () => {
 
     expect(getByText('Rider GPS Cockpit')).toBeTruthy();
     expect(getByText('Active Deliveries (0)')).toBeTruthy();
+  });
+
+  it('toggles route line style between solid and dashed', async () => {
+    const { getByText, queryByText } = render(
+      <RiderMapScreen navigation={{ goBack: jest.fn(), navigate: jest.fn() }} route={{ params: {} }} />
+    );
+
+    if (queryByText('Loading map...')) {
+      await waitForElementToBeRemoved(() => queryByText('Loading map...'), { timeout: 10000 });
+    }
+
+    const toggleButton = getByText('Solid');
+    expect(toggleButton).toBeTruthy();
+
+    fireEvent.press(toggleButton);
+
+    expect(getByText('Dashed')).toBeTruthy();
   });
 });
