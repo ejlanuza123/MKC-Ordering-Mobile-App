@@ -2,7 +2,7 @@
 
 ## 📱 Release Information
 - **Version:** `v2.25.16`
-- **Platform:** Android / iOS (React Native + Expo 55)
+- **Platform:** Android (React Native + Expo 55)
 - **APK Download:** [Download MKC Foods Corporation v2.25.16 APK](https://drive.google.com/file/d/1EVd4Cn8sGZ95YshAJIk6YA-ZychM5iSx/view?usp=drive_link)
 - **Direct Link:** `https://drive.google.com/file/d/1EVd4Cn8sGZ95YshAJIk6YA-ZychM5iSx/view?usp=drive_link`
 

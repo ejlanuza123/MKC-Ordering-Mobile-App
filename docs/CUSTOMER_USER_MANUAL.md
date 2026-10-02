@@ -6,7 +6,7 @@ Welcome to the Customer User Manual for the **MKC Foods Corporation Mobile Appli
 
 ## 1. Before You Start
 
-- Install or open the production mobile app on your Android or iOS device.
+- Install or open the production mobile app on your Android device.
 - Turn on your device's Internet connection (Wi-Fi or Mobile Data).
 - **Allow Notification Permissions**: Essential for real-time food preparation updates, rider arrival alerts, and live chat notifications.
 - **Allow Location Access**: Recommended for instant GPS address detection and pin placement.
